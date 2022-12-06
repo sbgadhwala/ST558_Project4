@@ -3,7 +3,6 @@ library(shinydashboard)
 library(dashboardthemes)
 library(shinythemes)
 library(tidyverse)
-data("GermanCredit")
 library(DT)
 library(caret)
 
@@ -21,13 +20,22 @@ shinyServer(function(session, input, output) {
   
   output$table <- renderDataTable({
     
-    tab <- GermanCredit %>%
-      select("Class", "InstallmentRatePercentage") %>%
-      group_by(Class, InstallmentRatePercentage)
+    tab <- read_csv("C:\\Users\\sbgad\\Desktop\\airbnb\\cleanData_Airbnb.csv")
     
-    tibble(tab)
+    datatable(tab, options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '200px', targets = c(1, 3)))
+    ))
     
   })
+  
+  output$download <- downloadHandler(
+    filename = function(){"thename.csv"}, 
+    content = function(fname){
+      tab <- read_csv("C:\\Users\\sbgad\\Desktop\\airbnb\\cleanData_Airbnb.csv")
+      write.csv(tab, fname)
+    }
+  )
   
   output$progressBox <- renderInfoBox({
     infoBox(

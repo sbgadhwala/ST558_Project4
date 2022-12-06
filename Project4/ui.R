@@ -3,7 +3,6 @@ library(shinydashboard)
 library(dashboardthemes)
 library(shinythemes)
 library(tidyverse)
-data("GermanCredit")
 library(DT)
 library(caret)
 
@@ -69,7 +68,13 @@ body <- dashboardBody(
     
     
     tabItem(tabName = "data",
-            dataTableOutput("table")
+            fluidRow(
+              downloadButton('download',"Download this data")
+            ),
+            br(),
+            fluidRow(
+              dataTableOutput("table")
+            )
     ),
     
     tabItem(tabName = "modelling",

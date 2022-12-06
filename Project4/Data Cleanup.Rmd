@@ -35,21 +35,21 @@ df1
 
 df1 <- df1[complete.cases(df1), ]
 
-df1 <- df1 %>% rename("Indentity" = host_identity_verified,
-                      "City" = `neighbourhood group`,
+df1 <- df1 %>% rename("Host_Indentity" = host_identity_verified,
+                      "Borough" = `neighbourhood group`,
                       "Neighbourhood" = neighbourhood,
                       "Lat" = lat,
                       "Long" = long,
-                      "Instantly_Bookable" = instant_bookable,
-                      "Cancellation_Policy" = cancellation_policy,
-                      "AirBnb_Type" = `room type`,
-                      "Construction_Year" = `Construction year`,
+                      "Instant_Booking" = instant_bookable,
+                      "Cancel_Policy" = cancellation_policy,
+                      "Type" = `room type`,
+                      "Make_Year" = `Construction year`,
                       "Price" = price,
                       "Service_Fee" = `service fee`,
-                      "Minimum_Stay" = `minimum nights`,
+                      "Min_Stay" = `minimum nights`,
                       "Rating" = `review rate number`,
                       "Other_Listings" = `calculated host listings count`,
-                      "Days_Available" = `availability 365`)
+                      "Availability" = `availability 365`)
 
 df1
 ```
