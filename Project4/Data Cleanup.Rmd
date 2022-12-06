@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+author: "Shyam Gadhwala"
+date: "2022-12-06"
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+df1 <- read_csv("C:\\Users\\sbgad\\Desktop\\airbnb\\Airbnb_Open_Data.csv")
+
+```
+
+
+```{r}
+df1 <- df1 %>% select(-license)
+
+df1 <- df1 %>% select(host_identity_verified, `neighbourhood group`, neighbourhood, lat, long, instant_bookable, cancellation_policy, `room type`, `Construction year`, price, `service fee`, `minimum nights`, `review rate number`, `calculated host listings count`, `availability 365`, )
+
+
+df1 <- df1 %>% filter(!`neighbourhood group` %in% c("brookln"))
+
+df1
+
+```
+
+
+```{r}
+
+df1 <- df1[complete.cases(df1), ]
+
+df1 <- df1 %>% rename("Indentity" = host_identity_verified,
+                      "City" = `neighbourhood group`,
+                      "Neighbourhood" = neighbourhood,
+                      "Lat" = lat,
+                      "Long" = long,
+                      "Instantly_Bookable" = instant_bookable,
+                      "Cancellation_Policy" = cancellation_policy,
+                      "AirBnb_Type" = `room type`,
+                      "Construction_Year" = `Construction year`,
+                      "Price" = price,
+                      "Service_Fee" = `service fee`,
+                      "Minimum_Stay" = `minimum nights`,
+                      "Rating" = `review rate number`,
+                      "Other_Listings" = `calculated host listings count`,
+                      "Days_Available" = `availability 365`)
+
+df1
+```
+
+
+```{r}
+write.csv(df1, "C:\\Users\\sbgad\\Desktop\\airbnb\\cleanData_Airbnb.csv")
+
+```
+
+

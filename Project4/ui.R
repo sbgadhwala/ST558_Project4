@@ -38,7 +38,9 @@ body <- dashboardBody(
             fluidRow(
               theme = shinytheme("cyborg"),
               titlePanel(HTML("<h1><center><font size=14> About </font></center></h1>")),
-              HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
+              HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> 
+                   https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata <br>
+                   BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
             )
     ),
     
