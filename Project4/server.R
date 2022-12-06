@@ -25,8 +25,15 @@ shinyServer(function(session, input, output) {
       select("Class", "InstallmentRatePercentage") %>%
       group_by(Class, InstallmentRatePercentage)
     
-    tab
+    tibble(tab)
     
+  })
+  
+  output$progressBox <- renderInfoBox({
+    infoBox(
+      "Progress", "Shyam", icon = icon("list"),
+      color = "lime", fill = TRUE
+    )
   })
   
 

@@ -29,12 +29,14 @@ body <- dashboardBody(
   shinyDashboardThemes(
     theme = "grey_light"
   ),
-  skin = "white",
+  
+  skin = "black",
+  
   ## PLOTS AND SLIDERS
   tabItems(
     tabItem(tabName = "about",
             fluidRow(
-              theme = shinytheme("united"),
+              theme = shinytheme("cyborg"),
               titlePanel(HTML("<h1><center><font size=14> About </font></center></h1>")),
               HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
             )
@@ -86,6 +88,10 @@ body <- dashboardBody(
                 tabPanel("Tab2", "Tab content 2"),
                 tabPanel("Tab3", "Note that when side=right, the tab order is reversed.")
               )
+            ),
+            
+            fluidRow(
+              infoBoxOutput("progressBox")
             )
     )
   )
@@ -93,7 +99,8 @@ body <- dashboardBody(
 
 # Put them together into a dashboardPage
 dashboardPage(
-  dashboardHeader(title = "USA Crime Analysis App"),
+  skin = "black",
+  dashboardHeader(title = "USA Crime Analysis Shiny App"),
   sidebar,
   body
 )
