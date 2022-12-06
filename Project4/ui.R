@@ -1,37 +1,52 @@
 library(shiny)
 library(shinydashboard)
 library(dashboardthemes)
+library(shinythemes)
+library(tidyverse)
+data("GermanCredit")
+library(DT)
+library(caret)
 
 
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
 
-    menuItem("About", tabName = "about", icon = icon("circle-info")),
-    menuItem("Data", icon = icon("table"), tabName = "data"),
-    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations",
-             menuItem("Option 1", icon = icon("chart-pie"), tabName = "opt1"),
-             menuItem("Option 2", icon = icon("chart-pie"), tabName = "opt2"),
-             menuItem("Option 3", icon = icon("chart-pie"), tabName = "opt3")
+    menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = " ", badgeColor = "blue"),
+    menuItem("Data", icon = icon("table"), tabName = "data", badgeLabel = " ", badgeColor = "orange"),
+    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", 
+             menuItem("Chicago", icon = icon("c"), tabName = "opt1", badgeLabel = " ", badgeColor = "purple"),
+             menuItem("Denver", icon = icon("d"), tabName = "opt2", badgeLabel = " ", badgeColor = "purple"),
+             menuItem("Los Angeles", icon = icon("l"), tabName = "opt3", badgeLabel = " ", badgeColor = "purple")
              ),
     menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling",
-             badgeLabel = "Interesting", badgeColor = "yellow")
+             badgeLabel = " ", badgeColor = "lime")
   )
 )
 
 body <- dashboardBody(
   
   shinyDashboardThemes(
-    theme = "grey_dark"
+    theme = "grey_light"
   ),
   skin = "white",
   ## PLOTS AND SLIDERS
   tabItems(
     tabItem(tabName = "about",
             fluidRow(
-              box(title = "Histogram",plotOutput("plot1", height = 250),
+              theme = shinytheme("united"),
+              titlePanel(HTML("<h1><center><font size=14> About </font></center></h1>")),
+              HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
+            )
+    ),
+    
+    
+    
+    tabItem(tabName = "opt1",
+            fluidRow(
+              box(title = "Histogram",plotOutput("plot1", height = 400),
                   collapsible = TRUE,
-                  background = "maroon",
+                  background = "purple",
                   solidHeader = TRUE),
               
               box(
@@ -48,7 +63,12 @@ body <- dashboardBody(
             )
     ),
     
+    
     tabItem(tabName = "data",
+            dataTableOutput("table")
+    ),
+    
+    tabItem(tabName = "modelling",
             
             ## TABS
             fluidRow(
