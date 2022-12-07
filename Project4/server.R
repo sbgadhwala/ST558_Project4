@@ -2,6 +2,7 @@ library(shiny)
 library(shinydashboard)
 library(dashboardthemes)
 library(shinythemes)
+library(shinyWidgets)
 library(tidyverse)
 library(DT)
 library(caret)
@@ -15,6 +16,17 @@ source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\
 
 shinyServer(function(session, input, output) {
   
+  output$theme <- renderUI({
+    if (input$theme[1] == TRUE){
+      shinyDashboardThemes(
+        theme = "grey_dark"
+      )
+    }else{
+      shinyDashboardThemes(
+        theme = "grey_light"
+      )
+    }
+    })
   
   ##-----------------------------------------Data TAB-------------------------------------------
   getDataTabData <- reactive({
@@ -160,12 +172,16 @@ shinyServer(function(session, input, output) {
   
   
   ## ------------------------------------Visualizations TAB--------------------------------------
-  set.seed(122)
-  histdata <- rnorm(500)
   
-  output$plot1 <- renderPlot({
-    data <- histdata[seq_len(input$slider)]
-    hist(data)
+  getDataViz <- readData()
+  
+  output$samplePlot <- renderPlot({
+    
+    #df1 <- getDataViz %>% group_by(as_factor(Borough)) %>% summarize(Num_Of_Listings = n())
+    
+    ggplot(getDataViz, aes(x=factor(Borough))) + 
+      geom_bar(position="dodge", aes(fill = as_factor(Borough)))
+    
   })
   
 

@@ -2,6 +2,7 @@ library(shiny)
 library(shinydashboard)
 library(dashboardthemes)
 library(shinythemes)
+library(shinyWidgets)
 library(tidyverse)
 library(DT)
 library(caret)
@@ -17,7 +18,8 @@ source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
-
+    
+    br(),
     menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = "i", badgeColor = "green"),
     
     br(),
@@ -36,11 +38,8 @@ sidebar <- dashboardSidebar(
 
 body <- dashboardBody(
   
-  shinyDashboardThemes(
-    theme = "grey_light"
-  ),
-  
-  skin = "black",
+  uiOutput("theme"),
+
   
   ##-----------------------------------------About TAB---------------------------------------------
   tabItems(
@@ -64,6 +63,7 @@ body <- dashboardBody(
                 box(title = h4("Data for Airbnb Listings Details in New York City", style = "color:black;"), dataTableOutput("table"),
                     collapsible = TRUE,
                     solidHeader = TRUE,
+                    #background = "red",
                     width = 900)
               ),
               
@@ -117,10 +117,12 @@ body <- dashboardBody(
     
     ##-----------------------------------------Visualizations TAB---------------------------------------------
     tabItem(tabName = "vizualizations",
+            fluidPage(
+            
             fluidRow(
-              box(title = "Histogram",plotOutput("plot1", height = 400),
+              box(title = "Histogram",plotOutput("samplePlot", height = 400),
                   collapsible = TRUE,
-                  background = "purple",
+                  background = "black",
                   solidHeader = TRUE),
               
               box(
@@ -135,6 +137,7 @@ body <- dashboardBody(
                 textInput("text", "Text input:")
               )
             )
+    )
     ),
     
     
@@ -170,7 +173,13 @@ body <- dashboardBody(
 # Put them together into a dashboardPage
 dashboardPage(
   skin = "red",
-  dashboardHeader(title = "NYC Airbnb Listings"),
+  dashboardHeader(title = "NYC Airbnb Listings",
+                  tags$li(
+                      materialSwitch(inputId = "theme", label = HTML("<strong>Dark Mode</strong>"), status = "default"),
+                      title = "Dark Mode",
+                      style = "margin-top: 15px;",
+                    class = "dropdown")
+                  ),
   sidebar,
   body
 )
