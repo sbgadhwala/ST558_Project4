@@ -5,19 +5,21 @@ library(shinythemes)
 library(tidyverse)
 library(DT)
 library(caret)
+source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
 
 
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
 
-    menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = " ", badgeColor = "blue"),
-    menuItem("Data", icon = icon("table"), tabName = "data", badgeLabel = " ", badgeColor = "orange"),
-    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", 
-             menuItem("Chicago", icon = icon("c"), tabName = "opt1", badgeLabel = " ", badgeColor = "purple"),
-             menuItem("Denver", icon = icon("d"), tabName = "opt2", badgeLabel = " ", badgeColor = "purple"),
-             menuItem("Los Angeles", icon = icon("l"), tabName = "opt3", badgeLabel = " ", badgeColor = "purple")
-             ),
+    menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = "i", badgeColor = "blue"),
+    br(),
+    menuItem("Data", icon = icon("table"), tabName = "data", badgeLabel = "Options", badgeColor = "orange"),
+    selectizeInput("dataBorough", h5("Borough", style = "color:orange;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+    br(),
+    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Options", badgeColor = "red"),
+    selectizeInput("vizBorough", h5("Borough", style = "color:red;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+    br(),
     menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling",
              badgeLabel = " ", badgeColor = "lime")
   )
@@ -34,18 +36,20 @@ body <- dashboardBody(
   ## PLOTS AND SLIDERS
   tabItems(
     tabItem(tabName = "about",
-            fluidRow(
-              theme = shinytheme("cyborg"),
-              titlePanel(HTML("<h1><center><font size=14> About </font></center></h1>")),
-              HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> 
-                   https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata <br>
-                   BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
+            fluidPage(
+              fluidRow(
+                theme = shinytheme("cyborg"),
+                titlePanel(HTML("<h1><center><font size=14> About </font></center></h1>")),
+                HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> 
+                     https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata <br>
+                     BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
+              )
             )
     ),
     
     
     
-    tabItem(tabName = "opt1",
+    tabItem(tabName = "vizualizations",
             fluidRow(
               box(title = "Histogram",plotOutput("plot1", height = 400),
                   collapsible = TRUE,
@@ -68,12 +72,27 @@ body <- dashboardBody(
     
     
     tabItem(tabName = "data",
-            fluidRow(
-              downloadButton('download',"Download this data")
-            ),
-            br(),
-            fluidRow(
-              dataTableOutput("table")
+            fluidPage(
+              
+              fluidRow(
+                downloadButton('download',"Download Table")
+              ),
+              br(),
+              fluidRow(
+                dataTableOutput("table")
+              ),
+              br(),
+              fluidRow(
+                checkboxInput("queryData", "Query through the data?")
+                ),
+              conditionalPanel(condition = "input.queryData == 1", 
+                fluidRow(
+                  selectInput("borough", "Select Borough", choices = c("Bronx", "Brookyln", "Manhattan", "Queens", "Staten Island"),
+                              multiple = TRUE),
+                  selectInput("borough", "Select Borough", choices = c("Bronx", "Brookyln", "Manhattan", "Queens", "Staten Island"),
+                              multiple = TRUE)
+                )
+              )
             )
     ),
     
@@ -106,8 +125,8 @@ body <- dashboardBody(
 
 # Put them together into a dashboardPage
 dashboardPage(
-  skin = "black",
-  dashboardHeader(title = "USA Crime Analysis Shiny App"),
+  skin = "red",
+  dashboardHeader(title = "NYC Airbnb Data"),
   sidebar,
   body
 )
