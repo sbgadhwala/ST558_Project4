@@ -7,8 +7,10 @@ library(DT)
 library(caret)
 library(leaflet)
 
-#source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
-source("DataHelper.R")
+source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
+
+#For Github render
+#source("DataHelper.R")
 
 
 
@@ -16,20 +18,19 @@ source("DataHelper.R")
 sidebar <- dashboardSidebar(
   sidebarMenu(
 
-    menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = "i", badgeColor = "blue"),
+    menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = "i", badgeColor = "green"),
     
     br(),
     
-    menuItem("Data", icon = icon("table"), tabName = "data"),
+    menuItem("Data & Summaries", icon = icon("table"), tabName = "data", badgeLabel = "Map", badgeColor = "green"),
     br(),
     
-    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Options", badgeColor = "red"),
-    selectizeInput("vizBorough", h5("Borough", style = "color:red;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations"),
+    #selectizeInput("vizBorough", h5("Borough", style = "color:red;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
     
     br(),
     
-    menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling",
-             badgeLabel = " ", badgeColor = "lime")
+    menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling")
   )
 )
 
@@ -60,43 +61,56 @@ body <- dashboardBody(
     tabItem(tabName = "data",
             fluidPage(
               fluidRow(
-                downloadButton('download',"Export to CSV")
-              ),
-              
-              br(),
-              
-              fluidRow(
                 box(title = h4("Data for Airbnb Listings Details in New York City", style = "color:black;"), dataTableOutput("table"),
                     collapsible = TRUE,
                     solidHeader = TRUE,
                     width = 900)
               ),
               
-              h4("You can see ", strong("summaries"), " for a few variables below:"),
-              textOutput("dataTabInfo"),
+              fluidRow(
+                downloadButton('download',"Export as CSV")
+              ),
               
+              br(),
+              
+              h4("You can see ", strong("summaries"), " for important variables at the end of the page after applying filters:"),
+
               
               br(),
               br(),
               
               fluidRow(
                 column(4, 
-                       box(title = h4("Filters to apply on data (Changes apply in table as well)",style = "color:black;"),
-                         selectizeInput("dataBorough", h5("Select Borough", style = "color:black;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
-                         sliderInput("ratingSlider", h5("Filter by range for Ratings of the Listings", style = "color:black;"), min = 1, max = 5, value = c(1, 5)),
-                         selectizeInput("dataArrange", h5("Geographically see the Listing with Ascending or Descending Prices", style = "color:black;"), selected = "Descending", choices = c("Ascending", "Descending")),
-                         checkboxInput("dataArrangeTable", "Arrange the data by Price in Table as well?"),
+                       box(title = h4("Filters to apply on data ", strong("(Changes apply in table as well)", style = "color:red;"),style = "color:black;"),
+                         selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+                         sliderInput("ratingSlider", "Filter by range for Ratings of the Listings", min = 1, max = 5, value = c(1, 5)),
+                         selectizeInput("dataArrange", "Geographically see the Listings with Ascending or Descending Prices", selected = "Descending", choices = c("Ascending", "Descending")),
+                         checkboxInput("dataArrangeTable", "Arrange the data by Price in Table as well"),
                          br(),
-                         sliderInput("plotnum", h5("Chnage the number of Listings from filtered data Geographically", style = "color:black;"), min = 1, max = 100, value = 10, step = 1),
+                         sliderInput("plotnum", "Chnage the number of Listings from filtered data Geographically", min = 1, max = 100, value = 10, step = 1),
+                         br(),
+                         checkboxInput("moreOpts", h5("Need to apply", strong("more Filters", style = "color:red;"), "on data?", style = "color:black;")),
+                         br(),
+                         conditionalPanel(condition = "input.moreOpts == 1", 
+                                          selectizeInput("typeListData", "Type of Listing", choices = levels(as_factor(readData()$Type))),
+                                          numericInput("minYearData", "Construction of listing should be at least after (or in) the year:", value = 2010, min=2003, max=2022, step=1)),
+                         
+                         
                          collapsible = TRUE,
                          solidHeader = TRUE,
                          width = 800
                        )
                        ),
-                column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings",style = "color:black;"),leafletOutput("geoPlot", height = 500, width = 1000),
+                column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)",style = "color:black;"),leafletOutput("geoPlot", height = 500, width = 1000),
                               collapsible = TRUE,
                               solidHeader = TRUE,
                               width = 800))
+              ),
+              
+              fluidRow(
+                infoBoxOutput("priceBox"),
+                infoBoxOutput("ratingBox"),
+                infoBoxOutput("availBox")
               )
             )
     ),
@@ -146,9 +160,9 @@ body <- dashboardBody(
               )
             ),
             
-            fluidRow(
-              infoBoxOutput("progressBox")
-            )
+            #fluidRow(
+            #  infoBoxOutput("progressBox")
+            #)
     )
   )
 )
@@ -156,7 +170,7 @@ body <- dashboardBody(
 # Put them together into a dashboardPage
 dashboardPage(
   skin = "red",
-  dashboardHeader(title = "NYC Airbnb Data"),
+  dashboardHeader(title = "NYC Airbnb Listings"),
   sidebar,
   body
 )

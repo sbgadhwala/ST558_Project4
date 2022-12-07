@@ -7,8 +7,10 @@ library(DT)
 library(caret)
 library(leaflet)
 
-#source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
-source("DataHelper.R")
+source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
+
+#For Github render
+#source("DataHelper.R")
 
 
 shinyServer(function(session, input, output) {
@@ -16,32 +18,57 @@ shinyServer(function(session, input, output) {
   
   ##-----------------------------------------Data TAB-------------------------------------------
   getDataTabData <- reactive({
-    if (input$dataBorough == "All"){
-      if (input$dataArrangeTable){
-        if (input$dataArrange ==  "Descending"){
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price))
-        }else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price)
+    if(input$moreOpts){
+      if (input$dataBorough == "All"){
+        if (input$dataArrangeTable){
+          if (input$dataArrange ==  "Descending"){
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+          }else{
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+          }
+        }
+        else{
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+        }
+      } else{
+        if (input$dataArrangeTable){
+          if (input$dataArrange ==  "Descending"){
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+          }else{
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+          }
+        }
+        else{
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
         }
       }
-      else{
-        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])
-      }
-    } else{
-      if (input$dataArrangeTable){
-        if (input$dataArrange ==  "Descending"){
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough)
-        }else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough)
+    }else{
+      if (input$dataBorough == "All"){
+        if (input$dataArrangeTable){
+          if (input$dataArrange ==  "Descending"){
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price))
+          }else{
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price)
+          }
+        }
+        else{
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])
+        }
+      } else{
+        if (input$dataArrangeTable){
+          if (input$dataArrange ==  "Descending"){
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough)
+          }else{
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough)
+          }
+        }
+        else{
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Borough == input$dataBorough)
         }
       }
-      else{
-        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Borough == input$dataBorough)
-      }
-      #newData <- readData() %>% filter(Borough == input$dataBorough)
     }
+    
   })
-  
   
   output$table <- renderDataTable({
     
@@ -62,13 +89,38 @@ shinyServer(function(session, input, output) {
     
   })
   
-  
   output$geoPlot <- renderLeaflet({
-    if (input$dataArrange == "Descending"){
-      geoData <- getDataTabData() %>% arrange(desc(Price)) %>% select(Lat, Long, Price, Type, Rating)
+
+    if(input$moreOpts){
+      if (input$dataBorough == "All"){
+          if (input$dataArrange ==  "Descending"){
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+          }else{
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+          }
+      } else{
+          if (input$dataArrange ==  "Descending"){
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+          }else{
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+          }
+      }
     }else{
-    geoData <- getDataTabData() %>% arrange(Price) %>% select(Lat, Long, Price, Type, Rating)
+      if (input$dataBorough == "All"){
+          if (input$dataArrange ==  "Descending"){
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% select(Lat, Long, Price, Type, Rating)
+          }else{
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% select(Lat, Long, Price, Type, Rating)
+          }
+      } else{
+          if (input$dataArrange ==  "Descending"){
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% select(Lat, Long, Price, Type, Rating)
+          }else{
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% select(Lat, Long, Price, Type, Rating)
+          }
+      }
     }
+    
     geoData <- geoData[1:input$plotnum,]
     
     l <- leaflet() %>% addTiles()
@@ -81,13 +133,30 @@ shinyServer(function(session, input, output) {
     
   })
   
-  
-  
-  output$dataTabInfo <- renderText({
-    #get filtered data
+  output$priceBox <- renderInfoBox({
     newData <- getDataTabData()
-    paste0("The average Airbnb price for ", input$dataBorough, " Borough(s) is: $", round(mean(newData$Price, na.rm = TRUE), 2), " (See Below for More Filtering)")
+    infoBox(
+      paste0("Average Price of Airbnb Listings"), paste0("(Based on above Filters) is: $", round(mean(newData$Price, na.rm = TRUE), 2)), icon = icon("dollar-sign"),
+      color = "red", fill = TRUE
+    )
   })
+  
+  output$ratingBox <- renderInfoBox({
+    newData <- getDataTabData()
+    infoBox(
+      paste0("Average Rating of Airbnb Listings"), paste0("(Based on above Filters) is: ", round(mean(newData$Rating, na.rm = TRUE), 2)), icon = icon("star"),
+      color = "red", fill = TRUE
+    )
+  })
+  
+  output$availBox <- renderInfoBox({
+    newData <- getDataTabData()
+    infoBox(
+      paste0("Average Availability of Airbnb Listings"), paste0("(Based on above Filters) is for ", round(mean(newData$Availability, na.rm = TRUE), 2), " Days"), icon = icon("calendar-days"),
+      color = "red", fill = TRUE
+    )
+  })
+
   
   
   ## ------------------------------------Visualizations TAB--------------------------------------
@@ -103,12 +172,7 @@ shinyServer(function(session, input, output) {
   
   
   ##--------------------------------------Modelling TAB-------------------------------------------------
-  output$progressBox <- renderInfoBox({
-    infoBox(
-      "Progress", "Shyam", icon = icon("list"),
-      color = "lime", fill = TRUE
-    )
-  })
+
   
 
   
