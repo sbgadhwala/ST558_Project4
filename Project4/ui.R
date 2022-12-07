@@ -5,6 +5,8 @@ library(shinythemes)
 library(tidyverse)
 library(DT)
 library(caret)
+library(leaflet)
+
 source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
 
 
@@ -13,13 +15,17 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
 
     menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = "i", badgeColor = "blue"),
+    
     br(),
-    menuItem("Data", icon = icon("table"), tabName = "data", badgeLabel = "Options", badgeColor = "orange"),
-    selectizeInput("dataBorough", h5("Borough", style = "color:orange;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+    
+    menuItem("Data", icon = icon("table"), tabName = "data"),
     br(),
+    
     menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Options", badgeColor = "red"),
     selectizeInput("vizBorough", h5("Borough", style = "color:red;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+    
     br(),
+    
     menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling",
              badgeLabel = " ", badgeColor = "lime")
   )
@@ -33,7 +39,7 @@ body <- dashboardBody(
   
   skin = "black",
   
-  ## PLOTS AND SLIDERS
+  ##-----------------------------------------About TAB---------------------------------------------
   tabItems(
     tabItem(tabName = "about",
             fluidPage(
@@ -48,7 +54,42 @@ body <- dashboardBody(
     ),
     
     
+    ##-----------------------------------------Data TAB---------------------------------------------
+    tabItem(tabName = "data",
+            fluidPage(
+              fluidRow(
+                downloadButton('download',"Export to CSV")
+              ),
+              br(),
+              fluidRow(
+                box(title = h4("Data for Airbnb Listings Details in New York City", style = "color:black;"), dataTableOutput("table", height = 100, width = 800),
+                    collapsible = TRUE,
+                    solidHeader = TRUE,
+                    width = 900)
+              ),
+              br(),
+              textOutput("dataTabInfo"),
+              br(),
+              br(),
+              fluidRow(
+                column(4, 
+                       box(title = h4("Geospatially represented Top priced Airbnbs",style = "color:black;"),
+                         selectizeInput("dataBorough", h5("Borough", style = "color:black;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+                         sliderInput("plotnum", h5("See Top Priced Listing", style = "color:black;"), min = 1, max = 50, value = 10, step = 1),
+                         collapsible = TRUE,
+                         solidHeader = TRUE,
+                         width = 800
+                       )
+                       ),
+                column(8, box(title = h4("Geospatially represented Top priced Airbnbs",style = "color:black;"),leafletOutput("geoPlot", height = 500, width = 1000),
+                              collapsible = TRUE,
+                              solidHeader = TRUE,
+                              width = 800))
+              )
+            )
+    ),
     
+    ##-----------------------------------------Visualizations TAB---------------------------------------------
     tabItem(tabName = "vizualizations",
             fluidRow(
               box(title = "Histogram",plotOutput("plot1", height = 400),
@@ -71,31 +112,8 @@ body <- dashboardBody(
     ),
     
     
-    tabItem(tabName = "data",
-            fluidPage(
-              
-              fluidRow(
-                downloadButton('download',"Download Table")
-              ),
-              br(),
-              fluidRow(
-                dataTableOutput("table")
-              ),
-              br(),
-              fluidRow(
-                checkboxInput("queryData", "Query through the data?")
-                ),
-              conditionalPanel(condition = "input.queryData == 1", 
-                fluidRow(
-                  selectInput("borough", "Select Borough", choices = c("Bronx", "Brookyln", "Manhattan", "Queens", "Staten Island"),
-                              multiple = TRUE),
-                  selectInput("borough", "Select Borough", choices = c("Bronx", "Brookyln", "Manhattan", "Queens", "Staten Island"),
-                              multiple = TRUE)
-                )
-              )
-            )
-    ),
     
+    ##-----------------------------------------Modelling TAB---------------------------------------------
     tabItem(tabName = "modelling",
             
             ## TABS
