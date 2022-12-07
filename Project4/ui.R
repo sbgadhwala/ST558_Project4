@@ -28,8 +28,7 @@ sidebar <- dashboardSidebar(
     br(),
     
     menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations"),
-    #selectizeInput("vizBorough", h5("Borough", style = "color:red;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
-    
+
     br(),
     
     menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling")
@@ -121,29 +120,32 @@ body <- dashboardBody(
             fluidPage(
             
             fluidRow(
+              
+              column(6,
+                     box(
+                       title = "Filters",
+                       selectizeInput("plotBoroughs", "Select Borough", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"), selected = "All"),
+                       sliderInput("plotBoroughRating", "Rating Range:", min = 1, max = 5, value = c(1, 5), step = 1),
+                       sliderInput("plotBoroughsPrice", "Select Range of Price of Listing", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
+                       collapsible = TRUE,
+                       solidHeader = TRUE,
+
+                     )
+              )
+            ),
+              
+            fluidRow(
               box(title = "Count of Listings by Boroughs",
                   plotOutput("samplePlot", height = 400),
-                  br(),
-                  selectizeInput("plotBoroughs", "Select Borough", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"), selected = "All"),
-                  sliderInput("plotBoroughRating", "Rating Range:", min = 1, max = 5, value = c(1, 5), step = 1),
-                  sliderInput("plotBoroughsPrice", "Select Range of Price of Listing", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
-                  
                   collapsible = TRUE,
                   #background = "black",
-                  solidHeader = TRUE),
+                  solidHeader = TRUE
+                  ),
               
-              box(
-                title = "Inputs",
-                collapsible = TRUE,
-                #background = "black",
-                solidHeader = TRUE,
-                "Box content here", 
-                br(), 
-                "More box content",
-                sliderInput("slider", "Slider input:", 1, 100, 50),
-                textInput("text", "Text input:")
-              )
             )
+              
+              
+            
     )
     ),
     
@@ -177,10 +179,11 @@ body <- dashboardBody(
 # Put them together into a dashboardPage
 dashboardPage(
   skin = "red",
-  dashboardHeader(title = "NYC Airbnb Listings",
+  dashboardHeader(
+    title = span("NYC", tags$img(src = "air.png", width = '50%')),
+    #title = "NYC Airbnb Listings",
                   tags$li(
-                      materialSwitch(inputId = "theme", label = strong("Dark Mode", style = "color:white;"), status = "default"),
-                      title = "Dark Mode",
+                      materialSwitch(inputId = "theme", label = strong("Switch Theme", style = "color:white;"), status = "default"),
                       style = "margin-top: 15px;",
                     class = "dropdown")
                   ),

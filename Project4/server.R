@@ -142,6 +142,7 @@ shinyServer(function(session, input, output) {
     for (i in seq(1:input$plotnum)){
       l <- l %>% addMarkers(lng=geoData[i, 2]$Long, lat=geoData[i,1]$Lat, label = paste0("Type: ", geoData[i,4]$Type," ($",geoData[i,3]$Price, ", Rating: ",geoData[i,5]$Rating , ")"))
     }
+
     
     l
     
@@ -150,7 +151,7 @@ shinyServer(function(session, input, output) {
   output$priceBox <- renderInfoBox({
     newData <- getDataTabData()
     infoBox(
-      paste0("Average Price of Airbnb Listings"), paste0("(Based on above Filters) is: $", round(mean(newData$Price, na.rm = TRUE), 2)), icon = icon("dollar-sign"),
+      paste0("Price"), paste0("Average Price of Airbnb Listings (Based on above Filters) is: $", round(mean(newData$Price, na.rm = TRUE), 2)), icon = icon("dollar-sign"),
       color = "red", fill = TRUE
     )
   })
@@ -158,7 +159,7 @@ shinyServer(function(session, input, output) {
   output$ratingBox <- renderInfoBox({
     newData <- getDataTabData()
     infoBox(
-      paste0("Average Rating of Airbnb Listings"), paste0("(Based on above Filters) is: ", round(mean(newData$Rating, na.rm = TRUE), 2)), icon = icon("star"),
+      paste0("Rating"), paste0("Average Rating of Airbnb Listings (Based on above Filters) is: ", round(mean(newData$Rating, na.rm = TRUE), 2)), icon = icon("star"),
       color = "red", fill = TRUE
     )
   })
@@ -166,7 +167,7 @@ shinyServer(function(session, input, output) {
   output$availBox <- renderInfoBox({
     newData <- getDataTabData()
     infoBox(
-      paste0("Average Availability of Airbnb Listings"), paste0("(Based on above Filters) is for ", round(mean(newData$Availability, na.rm = TRUE), 2), " Days"), icon = icon("calendar-days"),
+      paste0("Availability"), paste0("Average Availability of Airbnb Listings (Based on above Filters) is for ", round(mean(newData$Availability, na.rm = TRUE), 2), " Days"), icon = icon("calendar-days"),
       color = "red", fill = TRUE
     )
   })
