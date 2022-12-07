@@ -60,7 +60,7 @@ body <- dashboardBody(
     tabItem(tabName = "data",
             fluidPage(
               fluidRow(
-                box(title = h4("Data for Airbnb Listings Details in New York City", style = "color:black;"), dataTableOutput("table"),
+                box(title = h4("Data for Airbnb Listings Details in New York City"), dataTableOutput("table"),
                     collapsible = TRUE,
                     solidHeader = TRUE,
                     #background = "red",
@@ -81,7 +81,7 @@ body <- dashboardBody(
               
               fluidRow(
                 column(4, 
-                       box(title = h4("Filters to apply on data ", strong("(Changes apply in table as well)", style = "color:red;"),style = "color:black;"),
+                       box(title = h4("Filters to apply on data ", strong("(Changes apply in table as well)", style = "color:red;")),
                          selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
                          sliderInput("ratingSlider", "Filter by range for Ratings of the Listings", min = 1, max = 5, value = c(1, 5)),
                          selectizeInput("dataArrange", "Geographically see the Listings with Ascending or Descending Prices", selected = "Descending", choices = c("Ascending", "Descending")),
@@ -89,7 +89,7 @@ body <- dashboardBody(
                          br(),
                          sliderInput("plotnum", "Chnage the number of Listings from filtered data Geographically", min = 1, max = 100, value = 10, step = 1),
                          br(),
-                         checkboxInput("moreOpts", h5("Need to apply", strong("more Filters", style = "color:red;"), "on data?", style = "color:black;")),
+                         checkboxInput("moreOpts", h5("Need to apply", strong("more Filters", style = "color:red;"), "on data?")),
                          br(),
                          conditionalPanel(condition = "input.moreOpts == 1", 
                                           selectizeInput("typeListData", "Type of Listing", choices = levels(as_factor(readData()$Type))),
@@ -101,7 +101,7 @@ body <- dashboardBody(
                          width = 800
                        )
                        ),
-                column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)",style = "color:black;"),leafletOutput("geoPlot", height = 500, width = 1000),
+                column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)"),leafletOutput("geoPlot", height = 500, width = 1000),
                               collapsible = TRUE,
                               solidHeader = TRUE,
                               width = 800))
@@ -162,10 +162,6 @@ body <- dashboardBody(
                 tabPanel("Tab3", "Note that when side=right, the tab order is reversed.")
               )
             ),
-            
-            #fluidRow(
-            #  infoBoxOutput("progressBox")
-            #)
     )
   )
 )
