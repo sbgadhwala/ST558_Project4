@@ -75,7 +75,7 @@ body <- dashboardBody(
                 column(4, 
                        box(title = h4("Geospatially represented Top priced Airbnbs",style = "color:black;"),
                          selectizeInput("dataBorough", h5("Borough", style = "color:black;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
-                         sliderInput("plotnum", h5("See Top Priced Listing", style = "color:black;"), min = 1, max = 50, value = 10, step = 1),
+                         sliderInput("plotnum", h5("See Top Priced Listing", style = "color:black;"), min = 1, max = 100, value = 10, step = 1),
                          collapsible = TRUE,
                          solidHeader = TRUE,
                          width = 800

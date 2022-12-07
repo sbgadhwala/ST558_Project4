@@ -44,13 +44,13 @@ shinyServer(function(session, input, output) {
   
   
   output$geoPlot <- renderLeaflet({
-    geoData <- getDataTabData() %>% select(Lat, Long)
+    geoData <- getDataTabData() %>% arrange(desc(Price)) %>% select(Lat, Long, Price, Type)
     geoData <- geoData[1:input$plotnum,]
     
     l <- leaflet() %>% addTiles()
     
     for (i in seq(1:input$plotnum)){
-      l <- l %>% addMarkers(lng=geoData[i, 2]$Long, lat=geoData[i,1]$Lat)
+      l <- l %>% addMarkers(lng=geoData[i, 2]$Long, lat=geoData[i,1]$Lat, label = paste0("Type: ", geoData[i,4]$Type," ($",geoData[i,3]$Price, ")"))
     }
     
     l
