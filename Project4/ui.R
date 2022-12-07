@@ -60,28 +60,38 @@ body <- dashboardBody(
               fluidRow(
                 downloadButton('download',"Export to CSV")
               ),
+              
               br(),
+              
               fluidRow(
-                box(title = h4("Data for Airbnb Listings Details in New York City", style = "color:black;"), dataTableOutput("table", height = 100, width = 800),
+                box(title = h4("Data for Airbnb Listings Details in New York City", style = "color:black;"), dataTableOutput("table"),
                     collapsible = TRUE,
                     solidHeader = TRUE,
                     width = 900)
               ),
-              br(),
+              
+              h4("You can see ", strong("summaries"), " for a few variables below:"),
               textOutput("dataTabInfo"),
+              
+              
               br(),
               br(),
+              
               fluidRow(
                 column(4, 
-                       box(title = h4("Geospatially represented Top priced Airbnbs",style = "color:black;"),
-                         selectizeInput("dataBorough", h5("Borough", style = "color:black;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
-                         sliderInput("plotnum", h5("See Top Priced Listing", style = "color:black;"), min = 1, max = 100, value = 10, step = 1),
+                       box(title = h4("Filters to apply on data (Changes apply in table as well)",style = "color:black;"),
+                         selectizeInput("dataBorough", h5("Select Borough", style = "color:black;"), selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+                         sliderInput("ratingSlider", h5("Filter by range for Ratings of the Listings", style = "color:black;"), min = 1, max = 5, value = c(1, 5)),
+                         selectizeInput("dataArrange", h5("Geographically see the Listing with Ascending or Descending Prices", style = "color:black;"), selected = "Descending", choices = c("Ascending", "Descending")),
+                         checkboxInput("dataArrangeTable", "Arrange the data by Price in Table as well?"),
+                         br(),
+                         sliderInput("plotnum", h5("Chnage the number of Listings from filtered data Geographically", style = "color:black;"), min = 1, max = 100, value = 10, step = 1),
                          collapsible = TRUE,
                          solidHeader = TRUE,
                          width = 800
                        )
                        ),
-                column(8, box(title = h4("Geospatially represented Top priced Airbnbs",style = "color:black;"),leafletOutput("geoPlot", height = 500, width = 1000),
+                column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings",style = "color:black;"),leafletOutput("geoPlot", height = 500, width = 1000),
                               collapsible = TRUE,
                               solidHeader = TRUE,
                               width = 800))
