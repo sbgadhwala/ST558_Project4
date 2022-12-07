@@ -34,48 +34,50 @@ shinyServer(function(session, input, output) {
       if (input$dataBorough == "All"){
         if (input$dataArrangeTable){
           if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
           }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
           }
         }
         else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
         }
       } else{
         if (input$dataArrangeTable){
           if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
           }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
           }
         }
         else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
         }
       }
     }else{
       if (input$dataBorough == "All"){
         if (input$dataArrangeTable){
           if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price))
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% 
+              filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price))
           }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% 
+              filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price)
           }
         }
         else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])
         }
       } else{
         if (input$dataArrangeTable){
           if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough)
           }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough)
+            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price) %>% filter(Borough == input$dataBorough)
           }
         }
         else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Borough == input$dataBorough)
+          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% filter(Borough == input$dataBorough)
         }
       }
     }
@@ -106,29 +108,29 @@ shinyServer(function(session, input, output) {
     if(input$moreOpts){
       if (input$dataBorough == "All"){
           if (input$dataArrange ==  "Descending"){
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
           }else{
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
           }
       } else{
           if (input$dataArrange ==  "Descending"){
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
           }else{
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData) %>% select(Lat, Long, Price, Type, Rating)
           }
       }
     }else{
       if (input$dataBorough == "All"){
           if (input$dataArrange ==  "Descending"){
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% select(Lat, Long, Price, Type, Rating)
           }else{
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% select(Lat, Long, Price, Type, Rating)
           }
       } else{
           if (input$dataArrange ==  "Descending"){
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% select(Lat, Long, Price, Type, Rating)
           }else{
-            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% select(Lat, Long, Price, Type, Rating)
+            geoData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% select(Lat, Long, Price, Type, Rating)
           }
       }
     }
@@ -177,10 +179,22 @@ shinyServer(function(session, input, output) {
   
   output$samplePlot <- renderPlot({
     
-    #df1 <- getDataViz %>% group_by(as_factor(Borough)) %>% summarize(Num_Of_Listings = n())
+    if (input$plotBoroughs == "All"){
+      ggplot(getDataViz %>% filter(Rating >= input$plotBoroughRating[1]) %>% filter(Rating <= input$plotBoroughRating[2])
+             %>% filter(Price >= input$plotBoroughsPrice[1]) %>% filter(Price <= input$plotBoroughsPrice[2]), 
+             aes(x=factor(Borough))) + 
+        geom_bar(position="dodge", aes(fill = as_factor(Borough))) +
+        labs(x = "Borough", y = "Count of Listings") + 
+        scale_fill_discrete(name = "Borough")
+    }else{
+      ggplot(data = getDataViz %>% filter(Borough == input$plotBoroughs) %>% filter(Rating >= input$plotBoroughRating[1]) %>% filter(Rating <= input$plotBoroughRating[2])
+             %>% filter(Price >= input$plotBoroughsPrice[1]) %>% filter(Price <= input$plotBoroughsPrice[2]),
+             aes(x=factor(Borough))) + 
+        geom_bar(position="dodge", aes(fill = as_factor(Borough))) +
+        labs(x = "Borough", y = "Count of Listings") + 
+        scale_fill_discrete(name = "Borough")
+    }
     
-    ggplot(getDataViz, aes(x=factor(Borough))) + 
-      geom_bar(position="dodge", aes(fill = as_factor(Borough)))
     
   })
   

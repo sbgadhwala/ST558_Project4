@@ -41,7 +41,7 @@ body <- dashboardBody(
   uiOutput("theme"),
 
   
-  ##-----------------------------------------About TAB---------------------------------------------
+    ##-----------------------------------------About TAB---------------------------------------------
   tabItems(
     tabItem(tabName = "about",
             fluidPage(
@@ -83,7 +83,8 @@ body <- dashboardBody(
                 column(4, 
                        box(title = h4("Filters to apply on data ", strong("(Changes apply in table as well)", style = "color:red;")),
                          selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
-                         sliderInput("ratingSlider", "Filter by range for Ratings of the Listings", min = 1, max = 5, value = c(1, 5)),
+                         sliderInput("priceSlider", "Filter by Price range of the Listings", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
+                         sliderInput("ratingSlider", "Filter by Rating range of the Listings", min = 1, max = 5, value = c(1, 5)),
                          selectizeInput("dataArrange", "Geographically see the Listings with Ascending or Descending Prices", selected = "Descending", choices = c("Ascending", "Descending")),
                          checkboxInput("dataArrangeTable", "Arrange the data by Price in Table as well"),
                          br(),
@@ -120,15 +121,21 @@ body <- dashboardBody(
             fluidPage(
             
             fluidRow(
-              box(title = "Histogram",plotOutput("samplePlot", height = 400),
+              box(title = "Count of Listings by Boroughs",
+                  plotOutput("samplePlot", height = 400),
+                  br(),
+                  selectizeInput("plotBoroughs", "Select Borough", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"), selected = "All"),
+                  sliderInput("plotBoroughRating", "Rating Range:", min = 1, max = 5, value = c(1, 5), step = 1),
+                  sliderInput("plotBoroughsPrice", "Select Range of Price of Listing", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
+                  
                   collapsible = TRUE,
-                  background = "black",
+                  #background = "black",
                   solidHeader = TRUE),
               
               box(
                 title = "Inputs",
                 collapsible = TRUE,
-                background = "black",
+                #background = "black",
                 solidHeader = TRUE,
                 "Box content here", 
                 br(), 
@@ -166,12 +173,13 @@ body <- dashboardBody(
   )
 )
 
+    ##-----------------------------------------General TAB---------------------------------------------
 # Put them together into a dashboardPage
 dashboardPage(
   skin = "red",
   dashboardHeader(title = "NYC Airbnb Listings",
                   tags$li(
-                      materialSwitch(inputId = "theme", label = HTML("<strong>Dark Mode</strong>"), status = "default"),
+                      materialSwitch(inputId = "theme", label = strong("Dark Mode", style = "color:white;"), status = "default"),
                       title = "Dark Mode",
                       style = "margin-top: 15px;",
                     class = "dropdown")
