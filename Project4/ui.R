@@ -7,6 +7,7 @@ library(tidyverse)
 library(DT)
 library(caret)
 library(leaflet)
+library(corrplot)
 
 source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
 
@@ -14,25 +15,42 @@ source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\
 #source("DataHelper.R")
 
 
-
-
 sidebar <- dashboardSidebar(
-  sidebarMenu(
-    
-    br(),
-    menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = "i", badgeColor = "green"),
-    
-    br(),
-    
-    menuItem("Data & Summaries", icon = icon("table"), tabName = "data", badgeLabel = "Map", badgeColor = "green"),
-    br(),
-    
-    menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations"),
 
-    br(),
+  sidebarMenu(id = "sMenu",
+              
+              br(),
+              menuItem("About", tabName = "about", icon = icon("circle-info"), badgeLabel = " ", badgeColor = "red"),
+              
+              br(),
+              
+              menuItem("Data", icon = icon("table"), tabName = "data", badgeLabel = " ", badgeColor = "red"),
     
-    menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling")
+              br(),
+              
+              menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Maps", badgeColor = "red"),
+              
+              conditionalPanel("input.sMenu == 'vizualizations'", 
+
+                               pickerInput(
+                                 inputId = "corrCols", 
+                                 label = h5("Select Variables to see Correlations b/w them (Plot 1):", style = "color:white;"), 
+                                 choices = names(readData()), 
+                                 options = list(
+                                   `actions-box` = TRUE, 
+                                    size = 10,
+                                   `selected-text-format` = "count > 3"
+                                 ), 
+                                 multiple = TRUE,
+                                 selected = c("Price", "Rating")
+                               )
+                               #selectizeInput("corr1", h5("Select Variable to ", style = "color:white;"), choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"), selected = "All")
+                               ),
+              br(),
+              
+              menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling", badgeLabel = " ", badgeColor = "red")
   )
+  
 )
 
 body <- dashboardBody(
@@ -72,7 +90,7 @@ body <- dashboardBody(
               
               br(),
               
-              h4("You can see ", strong("summaries"), " for important variables at the end of the page after applying filters:"),
+              h4("If you want a filtered table, you can apply filters for ", strong("Rows and Columns"), " below:"),
 
               
               br(),
@@ -80,14 +98,12 @@ body <- dashboardBody(
               
               fluidRow(
                 column(4, 
-                       box(title = h4("Filters to apply on data ", strong("(Changes apply in table as well)", style = "color:red;")),
+                       box(title = h4(strong("Filter the rows data from the table", style = "color:red;")),
                          selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
                          sliderInput("priceSlider", "Filter by Price range of the Listings", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
                          sliderInput("ratingSlider", "Filter by Rating range of the Listings", min = 1, max = 5, value = c(1, 5)),
-                         selectizeInput("dataArrange", "Geographically see the Listings with Ascending or Descending Prices", selected = "Descending", choices = c("Ascending", "Descending")),
-                         checkboxInput("dataArrangeTable", "Arrange the data by Price in Table as well"),
-                         br(),
-                         sliderInput("plotnum", "Chnage the number of Listings from filtered data Geographically", min = 1, max = 100, value = 10, step = 1),
+                         selectizeInput("dataArrange", "Select Sorting by Ascending or Descending Price of Listings", selected = "Descending", choices = c("Ascending", "Descending")),
+                         checkboxInput("dataArrangeTable", "Arrange the data table by above selection of sorting"),
                          br(),
                          checkboxInput("moreOpts", h5("Need to apply", strong("more Filters", style = "color:red;"), "on data?")),
                          br(),
@@ -101,17 +117,8 @@ body <- dashboardBody(
                          width = 800
                        )
                        ),
-                column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)"),leafletOutput("geoPlot", height = 500, width = 1000),
-                              collapsible = TRUE,
-                              solidHeader = TRUE,
-                              width = 800))
-              ),
-              
-              fluidRow(
-                infoBoxOutput("priceBox"),
-                infoBoxOutput("ratingBox"),
-                infoBoxOutput("availBox")
               )
+              
             )
     ),
     
@@ -119,29 +126,71 @@ body <- dashboardBody(
     tabItem(tabName = "vizualizations",
             fluidPage(
             
+            h2(strong("Build your own Graph:")),
+            
             fluidRow(
               
-              column(6,
-                     box(
-                       title = "Filters",
-                       selectizeInput("plotBoroughs", "Select Borough", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"), selected = "All"),
-                       sliderInput("plotBoroughRating", "Rating Range:", min = 1, max = 5, value = c(1, 5), step = 1),
-                       sliderInput("plotBoroughsPrice", "Select Range of Price of Listing", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
-                       collapsible = TRUE,
-                       solidHeader = TRUE,
-
-                     )
-              )
+              column(2, selectizeInput("varX", "Plot", choices = c("Number of Listings", "Average Price", "Average Service Fee", "Average Availability", " Average Ratings"), selected = "Number of Listings")),
+              column(2, selectizeInput("varY", "By", choices = c("Borough", "Neighbourhood", "Type", "Make_Year"), selected = "Borough")),
+              column(2, selectizeInput("plotType", "Plot Type", choices = c("Bar Plot", "Scatter", "Line", "Density"), selected = "Bar Plot")),
+              column(2, selectizeInput("grpBy", "Classify by", choices = c("Host_Identity", "Available_Now", "Cancellation"), selected = "Host_Identity")),
+              column(2, checkboxInput("extraClass", h5("Need extra group by for plot?"))),
+              conditionalPanel("input.extraClass == 1", 
+                               column(2, selectizeInput("extraGrpBy", "Extra Variable", choices = c("Host_Identity", "Available_Now", "Cancellation"), selected = "Cancellation")))
+   
             ),
               
             fluidRow(
-              box(title = "Count of Listings by Boroughs",
-                  plotOutput("samplePlot", height = 400),
+              box(title = "Your Graph",
+                  plotOutput("plot1", height = 400),
                   collapsible = TRUE,
                   #background = "black",
                   solidHeader = TRUE
                   ),
+              box(title = "Plot2",
+                  #plotOutput("plot1", height = 400),
+                  collapsible = TRUE,
+                  #background = "black",
+                  solidHeader = TRUE
+              )
               
+            ),
+            
+            h2(strong("Geospatial Visualization:")),
+            
+            fluidRow(
+              
+              column(4, 
+                     box(title = h4(strong("Apply Filters to see Listings on Map", style = "color:red;")),
+                         selectizeInput("dataBorough1", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+                         sliderInput("priceSlider1", "Filter by Price range of the Listings", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
+                         sliderInput("ratingSlider1", "Filter by Rating range of the Listings", min = 1, max = 5, value = c(1, 5)),
+                         selectizeInput("dataArrange1", "Show Listings on Map sorted by Ascending or Descending Prices", selected = "Descending", choices = c("Ascending", "Descending")),
+                         br(),
+                         sliderInput("plotnum1", "Chnage the number of Listings on Map", min = 1, max = 100, value = 10, step = 1),
+                         br(),
+                         checkboxInput("moreOpts1", h5("Apply", strong("more Filters", style = "color:red;"))),
+                         br(),
+                         conditionalPanel(condition = "input.moreOpts1 == 1", 
+                                          selectizeInput("typeListData1", "Type of Listing", choices = levels(as_factor(readData()$Type))),
+                                          numericInput("minYearData1", "Construction of listing should be at least after (or in) the year:", value = 2010, min=2003, max=2022, step=1)),
+                         
+                         
+                         collapsible = TRUE,
+                         solidHeader = TRUE,
+                         width = 800
+                     )
+              ),
+              column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)"),leafletOutput("geoPlot", height = 500, width = 1000),
+                            collapsible = TRUE,
+                            solidHeader = TRUE,
+                            width = 800))
+            ),
+            
+            fluidRow(
+              infoBoxOutput("priceBox"),
+              infoBoxOutput("ratingBox"),
+              infoBoxOutput("availBox")
             )
               
               
