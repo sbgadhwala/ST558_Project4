@@ -90,6 +90,15 @@ shinyServer(function(session, input, output) {
     
     tab <- getDataTabData()
     
+    #print(input$allCols)
+    #df <- NULL
+    
+    
+    #for (i in input$allCols){
+    #  df <- cbind(df, data.frame(tab)[i])
+    #}
+    #tab <- data.frame(getDataTabData())[, input$allCols]
+
     output$download <- downloadHandler(
       filename = function(){"Airbnb_Data.csv"}, 
       content = function(fname){
@@ -103,6 +112,14 @@ shinyServer(function(session, input, output) {
       columnDefs = list(list(width = '200px', targets = c(1, 3)))
     ))
     
+  })
+  
+  output$observs <- renderInfoBox({
+    newData <- getDataTabData()
+    infoBox(
+      paste0("Total Listings"), paste0("Total Airbnb Listings based on above filters are ", nrow(newData)), icon = icon("globe"),
+      color = "red", fill = TRUE
+    )
   })
   
   
@@ -168,9 +185,22 @@ shinyServer(function(session, input, output) {
   
   output$plot1 <- renderPlot({
     
-    ggplot(getDataViz, aes(x=Price, y=as_factor(Borough))) + 
-      geom_bar(stat = "identity", aes(fill = as_factor(Borough)))
+
+    if (input$varX == "Number of Listings"){
+      df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(count = n())
+    }
     
+    
+    g <- ggplot(df, aes_string(x = input$varY, y = "count")) + 
+      geom_bar(aes_string(fill = input$varY), stat = "identity") +
+      facet_grid(~get(input$grpBy)) +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 90), 
+            axis.text=element_text(size=14),
+            axis.title=element_text(size=16,face="bold"),
+            strip.text.x = element_text(size = 14))
+      
+    g
     
   })
   
@@ -239,6 +269,14 @@ shinyServer(function(session, input, output) {
     newData <- getFilteredVizData()
     infoBox(
       paste0("Availability"), paste0("Average Availability of Airbnb Listings (Based on above Filters) is for ", round(mean(newData$Availability, na.rm = TRUE), 2), " Days"), icon = icon("calendar-days"),
+      color = "red", fill = TRUE
+    )
+  })
+  
+  output$viztotalObs <- renderInfoBox({
+    newData <- getFilteredVizData()
+    infoBox(
+      paste0("Listings"), paste0("Total Airbnb Listings based on above filters are ", nrow(newData)), icon = icon("globe"),
       color = "red", fill = TRUE
     )
   })

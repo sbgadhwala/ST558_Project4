@@ -98,7 +98,7 @@ body <- dashboardBody(
               
               fluidRow(
                 column(4, 
-                       box(title = h4(strong("Filter the rows data from the table", style = "color:red;")),
+                       box(title = h4(strong("Filter the Row data from the table", style = "color:red;")),
                          selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
                          sliderInput("priceSlider", "Filter by Price range of the Listings", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
                          sliderInput("ratingSlider", "Filter by Rating range of the Listings", min = 1, max = 5, value = c(1, 5)),
@@ -115,8 +115,29 @@ body <- dashboardBody(
                          collapsible = TRUE,
                          solidHeader = TRUE,
                          width = 800
-                       )
-                       ),
+                       )),
+                       
+                column(4,
+                       box(title = h4(strong("Filter Columns from the table", style = "color:red;")),
+                         pickerInput(
+                           inputId = "allCols", 
+                           label = "Select Columns", 
+                           choices = c("Host_Identity", "Borough", "Neighbourhood",
+                                       "Lat", "Long", "Available_Now", "Cancellation",
+                                       "Type", "Make_Year", "Price", "Service_Fee",
+                                       "Min_Stay", "Rating", "Host_Listings", "Availability"), 
+                           options = list(
+                             `actions-box` = TRUE, 
+                             size = 10,
+                             `selected-text-format` = "count > 3"
+                           ), 
+                           multiple = TRUE,
+                           selected = names(readData())
+                         ) 
+                       )),
+              ),
+              fluidRow(
+                infoBoxOutput("observs"),
               )
               
             )
@@ -126,34 +147,35 @@ body <- dashboardBody(
     tabItem(tabName = "vizualizations",
             fluidPage(
             
-            h2(strong("Build your own Graph:")),
+            h2(strong("Build your own Visualization:")),
             
             fluidRow(
               
-              column(2, selectizeInput("varX", "Plot", choices = c("Number of Listings", "Average Price", "Average Service Fee", "Average Availability", " Average Ratings"), selected = "Number of Listings")),
-              column(2, selectizeInput("varY", "By", choices = c("Borough", "Neighbourhood", "Type", "Make_Year"), selected = "Borough")),
-              column(2, selectizeInput("plotType", "Plot Type", choices = c("Bar Plot", "Scatter", "Line", "Density"), selected = "Bar Plot")),
-              column(2, selectizeInput("grpBy", "Classify by", choices = c("Host_Identity", "Available_Now", "Cancellation"), selected = "Host_Identity")),
-              column(2, checkboxInput("extraClass", h5("Need extra group by for plot?"))),
-              conditionalPanel("input.extraClass == 1", 
-                               column(2, selectizeInput("extraGrpBy", "Extra Variable", choices = c("Host_Identity", "Available_Now", "Cancellation"), selected = "Cancellation")))
-   
+              column(3, selectizeInput("varX", "Plot", choices = c("Number of Listings", "Average Price", "Average Service Fee", "Average Availability", " Average Ratings"), selected = "Number of Listings")),
+              column(3, selectizeInput("varY", "By", choices = c("Borough", "Type", "Make_Year", "Host_Identity", "Available_Now", "Cancellation"), selected = "Borough")),
+              column(3, selectizeInput("grpBy", "Further Classified By", choices = c("Borough", "Type", "Make_Year", "Host_Identity", "Available_Now", "Cancellation"), selected = "Type")),
+              column(3, selectizeInput("plotType", "Plot Type", choices = c("Bar Plot", "Box Plot", "Line Plot", "Density Plot"), selected = "Bar Plot"))
+              
+
             ),
               
             fluidRow(
-              box(title = "Your Graph",
-                  plotOutput("plot1", height = 400),
+              box(title = "Your Graph",width = 1000,
+                  
+                  plotOutput("plot1", width = 1200),
                   collapsible = TRUE,
                   #background = "black",
                   solidHeader = TRUE
-                  ),
+                  )
+            ),
+            br(),
+            fluidRow(
               box(title = "Plot2",
                   #plotOutput("plot1", height = 400),
                   collapsible = TRUE,
                   #background = "black",
                   solidHeader = TRUE
               )
-              
             ),
             
             h2(strong("Geospatial Visualization:")),
@@ -181,14 +203,16 @@ body <- dashboardBody(
                          width = 800
                      )
               ),
-              column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)"),leafletOutput("geoPlot", height = 500, width = 1000),
+              column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)"),leafletOutput("geoPlot", height = 650, width = 1000),
                             collapsible = TRUE,
                             solidHeader = TRUE,
                             width = 800))
             ),
             
             fluidRow(
-              infoBoxOutput("priceBox"),
+              infoBoxOutput("viztotalObs"),
+              infoBoxOutput("priceBox")
+            ),fluidRow(
               infoBoxOutput("ratingBox"),
               infoBoxOutput("availBox")
             )
