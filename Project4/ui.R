@@ -28,7 +28,7 @@ sidebar <- dashboardSidebar(
     
               br(),
               
-              menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Maps", badgeColor = "red"),
+              menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Map", badgeColor = "green"),
               
               br(),
               
@@ -148,8 +148,8 @@ body <- dashboardBody(
             ),
               
             fluidRow(
-              box(title = "Your Graph",width = 1200,
-                  h5("Hint: "),
+              box(title = "Your Generated Graph with above selected Variables:",width = 1200,
+                  h6("Tip: Bar Plot works best with Borough as the first classification, Box Plot works best with the Make_Year as the first classification, Line and Scatter plots work best with Make_Year as first calssification, and Borough as the second one."),
                   
                   plotOutput("plot1", width = 1200),
                   collapsible = TRUE,
@@ -158,25 +158,33 @@ body <- dashboardBody(
                   )
             ),
             br(),
-            h2(strong("Correaltion PLot:")),
+            h2(strong("Correaltion Plots:")),
             fluidRow(
               column(6,
               pickerInput(
                 inputId = "corrCols", 
                 label = "Select Variables to see Corrplot between them:", 
-                choices = names(readData()), 
-                options = list(
-                  `actions-box` = TRUE, 
-                  size = 10,
-                  `selected-text-format` = "count > 3"
-                ), 
+                choices = c("Price", "Make_Year", "Service_Fee", "Lat", "Long", "Min_Stay", "Host_Listings", "Rating"), 
+                options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                 multiple = TRUE,
-                selected = c("Price", "Rating")
-              ))
+                selected = c("Price", "Make_Year", "Service_Fee", "Rating")
+              )),
+              column(2,
+                     selectizeInput("corRating", "Select first Variable to see its Plot with second Variable:", names(readData()), selected = "Availability")
+                     ),
+              column(2,
+                     selectizeInput("corRating2", "Select second Variable to see its Plot with first Variable:", names(readData()), selected = "Host_Listings")
+              )
             ),
             fluidRow(
-              box(title = "Plot2",
-                  #plotOutput("plot1", height = 400),
+              box(title = "Corr Plot Between Selected Variables",
+                  plotOutput("plot2", height = 400),
+                  collapsible = TRUE,
+                  #background = "black",
+                  solidHeader = TRUE
+              ),
+              box(title = "Trend Graph for selected Variables",
+                  plotOutput("plot3", height = 400),
                   collapsible = TRUE,
                   #background = "black",
                   solidHeader = TRUE

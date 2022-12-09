@@ -182,6 +182,8 @@ shinyServer(function(session, input, output) {
   
   getDataViz <- readData()
   
+  
+  
   output$plot1 <- renderPlot({
     
 
@@ -373,6 +375,36 @@ shinyServer(function(session, input, output) {
     
   })
   
+  output$plot2 <- renderPlot({
+    
+    cor = c("Price", "Make_Year", "Service_Fee", "Lat", "Long", "Min_Stay", "Host_Listings", "Rating")
+    
+    cor = input$corrCols
+    
+    
+    df <- data.frame(readData())
+    
+    corDf <- df[, cor, drop=FALSE]
+    
+    cor <- cor(corDf, method = "spearman")
+    cor
+    
+    g <- corrplot(cor, hc.order = FALSE, 
+             addCoef.col = "black", type = "full"
+    )
+    
+    g
+  })
+  
+  output$plot3 <- renderPlot({
+    
+    g <- ggplot(readData(), aes_string(x = input$corRating2, y = input$corRating)) + 
+      geom_jitter(color = "red") + 
+      geom_smooth(method = "lm")
+    
+    g
+  })
+  
   output$geoPlot <- renderLeaflet({
     
     if(input$moreOpts1){
@@ -417,6 +449,8 @@ shinyServer(function(session, input, output) {
     l
     
   })
+  
+  
   
   output$priceBox <- renderInfoBox({
     newData <- getFilteredVizData()
