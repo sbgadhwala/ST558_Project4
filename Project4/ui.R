@@ -149,7 +149,7 @@ body <- dashboardBody(
               
             fluidRow(
               box(title = "Your Generated Graph with above selected Variables:",width = 1200,
-                  h6("Tip: Bar Plot works best with Borough as the first classification, Box Plot works best with the Make_Year as the first classification, Line and Scatter plots work best with Make_Year as first calssification, and Borough as the second one."),
+                  h6("Tip: Bar Plot works best with Borough as the first classification, Box Plot works best with the Make_Year as the first classification, Line and Scatter plots work best with Make_Year as first classification, and Borough as the second one."),
                   
                   plotOutput("plot1", width = 1200),
                   collapsible = TRUE,
@@ -158,7 +158,7 @@ body <- dashboardBody(
                   )
             ),
             br(),
-            h2(strong("Correaltion Plots:")),
+            h2(strong("Correlation Plots:")),
             fluidRow(
               column(6,
               pickerInput(
@@ -248,7 +248,7 @@ body <- dashboardBody(
                 id = "tabset1",
                 tabPanel("Modeling Info", "First tab content"),
                 
-                tabPanel("Model Fitting", 
+                tabPanel("Fit Model", 
                          fluidRow(
                            column(12,
                          box(
@@ -256,15 +256,18 @@ body <- dashboardBody(
                              h5("Model Type: Classification"),
                              sliderInput("testTrainPartition", h5(strong("Select the proportion of "), strong("Train/Test", style = "color:red;"), strong(" data ratio for each models below")), min = 0, max = 1, step = 0.05, value = 0.7),
                              collapsible = TRUE,
-                             solidHeader = TRUE
+                             solidHeader = TRUE,
+                           width = 12
                            )
                          )
                          ),
                          
                          fluidRow(
                            
-                           column(4,
-                           box(title = h5("Set tuning parameters to build", strong("GLM Regression", style = "color:red;"), " model"), 
+                           column(4, align="center", style = "background-color:grey;",
+                                  br(),
+                           box(
+                             title = h5("Set tuning parameters to build", strong("GLM Regression", style = "color:red;"), " model"), 
                                
                                pickerInput(
                                  inputId = "varsForGLM", 
@@ -279,12 +282,13 @@ body <- dashboardBody(
                                
                                collapsible = TRUE,
                                solidHeader = TRUE,
-                               #background = "red",
+                               #background = "black",
                                width = 2000
                                )
                                ),
                            
-                           column(4,
+                           column(4, align="center", style = "background-color:#b0b0b0;",
+                                  br(),
                            box(title = h5("Set tuning parameters to build the ", strong("Classification Tree", style = "color:red;"), " Model"),
                                pickerInput(
                                  inputId = "varsForCT", 
@@ -304,12 +308,13 @@ body <- dashboardBody(
                                numericInput("cpSkipCT", "Set the increment value of cp", min = 0.005, max = 0.05, value = 0.01),
                                collapsible = TRUE,
                                solidHeader = TRUE,
-                               #background = "red",
+                               #background = "black",
                                width = 2000
                            )
                            ),
                            
-                           column(4,
+                           column(4, align="center", style = "background-color:grey;",
+                                  br(),
                            box(title = h5("Set tuning parameters to build the ", strong("Random Forest", style = "color:red;"), " Model"), 
                                pickerInput(
                                  inputId = "varsForRF", 
@@ -328,13 +333,14 @@ body <- dashboardBody(
                                br(),
                                collapsible = TRUE,
                                solidHeader = TRUE,
-                               #background = "red",
+                               #background = "black",
                                width = 2000
                            )
                            )
                            
                          ),
-                         actionButton("buildModels", strong("Click here to build all Models", style = "color:red;"), width = 770)
+                         br(),
+                         actionButton("buildModels", strong("Build all Models", style = "color:red;"), width = 770)
                          
                          ),
                 
@@ -343,7 +349,9 @@ body <- dashboardBody(
               
               tabBox(title = "See Model Statistics",
                 id = "tabset2",
-                tabPanel("Generalized Linear Regression Model", textOutput("successruntext")),
+                tabPanel("Generalized Linear Regression Model", 
+                         h4(strong("Summary of Generalized Linear Regression Model:")),
+                         textOutput("successruntext")),
                 
                 tabPanel("Classification Tree", "Hello"),
                 

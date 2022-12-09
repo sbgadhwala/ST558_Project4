@@ -487,11 +487,15 @@ shinyServer(function(session, input, output) {
   
   
   ##--------------------------------------Modelling TAB-------------------------------------------------
-
+  
+  output$successruntext <- renderText({
+    paste0("From the 'Fit Model' tab, click on Build Models to get summary and stats")
+  })
+  
   observeEvent(input$buildModels, {
     
     output$successruntext <- renderText({
-      paste0("Successfully button worked!")
+      paste0("")
       })
     
   })
