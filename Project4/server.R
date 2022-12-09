@@ -488,7 +488,13 @@ shinyServer(function(session, input, output) {
   
   ##--------------------------------------Modelling TAB-------------------------------------------------
 
-  
+  observeEvent(input$buildModels, {
+    
+    output$successruntext <- renderText({
+      paste0("Successfully button worked!")
+      })
+    
+  })
 
   
   })

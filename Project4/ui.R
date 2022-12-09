@@ -343,7 +343,7 @@ body <- dashboardBody(
               
               tabBox(title = "See Model Statistics",
                 id = "tabset2",
-                tabPanel("Generalized Linear Regression Model", "First tab content"),
+                tabPanel("Generalized Linear Regression Model", textOutput("successruntext")),
                 
                 tabPanel("Classification Tree", "Hello"),
                 
