@@ -30,22 +30,6 @@ sidebar <- dashboardSidebar(
               
               menuItem("Vizualizations", icon = icon("chart-pie"), tabName = "vizualizations", badgeLabel = "Maps", badgeColor = "red"),
               
-              conditionalPanel("input.sMenu == 'vizualizations'", 
-
-                               pickerInput(
-                                 inputId = "corrCols", 
-                                 label = h5("Select Variables to see Correlations b/w them (Plot 1):", style = "color:white;"), 
-                                 choices = names(readData()), 
-                                 options = list(
-                                   `actions-box` = TRUE, 
-                                    size = 10,
-                                   `selected-text-format` = "count > 3"
-                                 ), 
-                                 multiple = TRUE,
-                                 selected = c("Price", "Rating")
-                               )
-                               #selectizeInput("corr1", h5("Select Variable to ", style = "color:white;"), choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"), selected = "All")
-                               ),
               br(),
               
               menuItem("Modelling", icon = icon("chart-line"), tabName = "modelling", badgeLabel = " ", badgeColor = "red")
@@ -77,7 +61,8 @@ body <- dashboardBody(
     tabItem(tabName = "data",
             fluidPage(
               fluidRow(
-                box(title = h4("Data for Airbnb Listings Details in New York City"), dataTableOutput("table"),
+                box(title = h4("Data for Airbnb Listings Details in New York City"), 
+                    dataTableOutput("table"),
                     collapsible = TRUE,
                     solidHeader = TRUE,
                     #background = "red",
@@ -129,11 +114,14 @@ body <- dashboardBody(
                            options = list(
                              `actions-box` = TRUE, 
                              size = 10,
-                             `selected-text-format` = "count > 3"
+                             `selected-text-format` = "count > 0"
                            ), 
                            multiple = TRUE,
                            selected = names(readData())
-                         ) 
+                         ),
+                         collapsible = TRUE,
+                         solidHeader = TRUE,
+                         width = 800
                        )),
               ),
               fluidRow(
@@ -151,16 +139,17 @@ body <- dashboardBody(
             
             fluidRow(
               
-              column(3, selectizeInput("varX", "Plot", choices = c("Number of Listings", "Average Price", "Average Service Fee", "Average Availability", " Average Ratings"), selected = "Number of Listings")),
+              column(3, selectizeInput("varX", "Plot", choices = c("Number of Listings", "Average Price", "Average Availability", "Average Ratings"), selected = "Number of Listings")),
               column(3, selectizeInput("varY", "By", choices = c("Borough", "Type", "Make_Year", "Host_Identity", "Available_Now", "Cancellation"), selected = "Borough")),
               column(3, selectizeInput("grpBy", "Further Classified By", choices = c("Borough", "Type", "Make_Year", "Host_Identity", "Available_Now", "Cancellation"), selected = "Type")),
-              column(3, selectizeInput("plotType", "Plot Type", choices = c("Bar Plot", "Box Plot", "Line Plot", "Density Plot"), selected = "Bar Plot"))
+              column(3, selectizeInput("plotType", "Plot Type", choices = c("Bar Plot", "Box Plot", "Line Plot", "Scatter Plot"), selected = "Bar Plot"))
               
 
             ),
               
             fluidRow(
-              box(title = "Your Graph",width = 1000,
+              box(title = "Your Graph",width = 1200,
+                  h5("Hint: "),
                   
                   plotOutput("plot1", width = 1200),
                   collapsible = TRUE,
@@ -169,6 +158,22 @@ body <- dashboardBody(
                   )
             ),
             br(),
+            h2(strong("Correaltion PLot:")),
+            fluidRow(
+              column(6,
+              pickerInput(
+                inputId = "corrCols", 
+                label = "Select Variables to see Corrplot between them:", 
+                choices = names(readData()), 
+                options = list(
+                  `actions-box` = TRUE, 
+                  size = 10,
+                  `selected-text-format` = "count > 3"
+                ), 
+                multiple = TRUE,
+                selected = c("Price", "Rating")
+              ))
+            ),
             fluidRow(
               box(title = "Plot2",
                   #plotOutput("plot1", height = 400),
@@ -211,8 +216,8 @@ body <- dashboardBody(
             
             fluidRow(
               infoBoxOutput("viztotalObs"),
-              infoBoxOutput("priceBox")
             ),fluidRow(
+              infoBoxOutput("priceBox"),
               infoBoxOutput("ratingBox"),
               infoBoxOutput("availBox")
             )

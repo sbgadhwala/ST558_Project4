@@ -88,28 +88,27 @@ shinyServer(function(session, input, output) {
   
   output$table <- renderDataTable({
     
-    tab <- getDataTabData()
-    
-    #print(input$allCols)
-    #df <- NULL
     
     
-    #for (i in input$allCols){
-    #  df <- cbind(df, data.frame(tab)[i])
-    #}
-    #tab <- data.frame(getDataTabData())[, input$allCols]
+    columns = names(readData())
+    
+    columns = input$allCols
+   
+    
+    tab <- data.frame(getDataTabData())
+    
+    tt <- tab[, columns, drop=FALSE]
 
     output$download <- downloadHandler(
       filename = function(){"Airbnb_Data.csv"}, 
       content = function(fname){
-        write.csv(tab, fname)
+        write.csv(tt, fname)
       }
     )
     
     
-    datatable(tab, options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '200px', targets = c(1, 3)))
+    datatable(tt, options = list(
+      autoWidth = TRUE
     ))
     
   })
@@ -187,11 +186,11 @@ shinyServer(function(session, input, output) {
     
 
     if (input$varX == "Number of Listings"){
-      df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(count = n())
-    }
+      df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(Listings = n())
     
     
-    g <- ggplot(df, aes_string(x = input$varY, y = "count")) + 
+    if (input$plotType == "Bar Plot"){
+    g <- ggplot(df, aes_string(x = input$varY, y = "Listings")) + 
       geom_bar(aes_string(fill = input$varY), stat = "identity") +
       facet_grid(~get(input$grpBy)) +
       theme_bw() +
@@ -199,7 +198,177 @@ shinyServer(function(session, input, output) {
             axis.text=element_text(size=14),
             axis.title=element_text(size=16,face="bold"),
             strip.text.x = element_text(size = 14))
+    }else if(input$plotType == "Line Plot"){
+      g <- ggplot(df, aes_string(x = input$varY, y = "Listings", group = 1, color = input$grpBy)) + 
+        geom_point() +
+        geom_line(method = "lm") +
+        facet_grid(~get(input$grpBy)) +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 90), 
+              axis.text=element_text(size=14),
+              axis.title=element_text(size=16,face="bold"),
+              strip.text.x = element_text(size = 14))
+    }else if(input$plotType == "Box Plot"){
+      g <- ggplot(df, aes_string(x = input$varY, y = "Listings")) + 
+        geom_boxplot(size=1, aes_string(color = input$grpBy)) + 
+        geom_jitter(size=3, aes_string(color = input$grpBy)) +
+        facet_grid(~get(input$grpBy)) +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 90), 
+              axis.text=element_text(size=14),
+              axis.title=element_text(size=16,face="bold"),
+              strip.text.x = element_text(size = 14))
+    }else{
+      g <- ggplot(df, aes_string(x = input$varY, y = "Listings", group = 1, color = input$grpBy)) + 
+        geom_point() +
+        geom_smooth(method = "lm") +
+        facet_grid(~get(input$grpBy)) +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 90), 
+              axis.text=element_text(size=14),
+              axis.title=element_text(size=16,face="bold"),
+              strip.text.x = element_text(size = 14))
+    }
+    }
+    
+    if (input$varX == "Average Price"){
+      df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(Average_Price = mean(Price))
       
+      
+      if (input$plotType == "Bar Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Price")) + 
+          geom_bar(aes_string(fill = input$varY), stat = "identity") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else if(input$plotType == "Line Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Price", group = 1, color = input$grpBy)) + 
+          geom_point() +
+          geom_line(method = "lm") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else if(input$plotType == "Box Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Price")) + 
+          geom_boxplot(size=1, aes_string(color = input$grpBy)) + 
+          geom_jitter(size=3, aes_string(color = input$grpBy)) +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else{
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Price", group = 1, color = input$grpBy)) + 
+          geom_point() +
+          geom_smooth(method = "lm") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }
+    }
+    
+    if (input$varX == "Average Availability"){
+      df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(Average_Availability = mean(Availability))
+      
+      
+      if (input$plotType == "Bar Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Availability")) + 
+          geom_bar(aes_string(fill = input$varY), stat = "identity") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else if(input$plotType == "Line Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Availability", group = 1, color = input$grpBy)) + 
+          geom_point() +
+          geom_line(method = "lm") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else if(input$plotType == "Box Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Availability")) + 
+          geom_boxplot(size=1, aes_string(color = input$grpBy)) + 
+          geom_jitter(size=3, aes_string(color = input$grpBy)) +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else{
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Availability", group = 1, color = input$grpBy)) + 
+          geom_point() +
+          geom_smooth(method = "lm") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }
+    }
+    
+    if (input$varX == "Average Ratings"){
+      df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(Average_Rating = mean(Rating))
+      
+      
+      if (input$plotType == "Bar Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Rating")) + 
+          geom_bar(aes_string(fill = input$varY), stat = "identity") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else if(input$plotType == "Line Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Rating", group = 1, color = input$grpBy)) + 
+          geom_point() +
+          geom_line(method = "lm") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else if(input$plotType == "Box Plot"){
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Rating")) + 
+          geom_boxplot(size=1, aes_string(color = input$grpBy)) + 
+          geom_jitter(size=3, aes_string(color = input$grpBy)) +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }else{
+        g <- ggplot(df, aes_string(x = input$varY, y = "Average_Rating", group = 1, color = input$grpBy)) + 
+          geom_point() +
+          geom_smooth(method = "lm") +
+          facet_grid(~get(input$grpBy)) +
+          theme_bw() +
+          theme(axis.text.x = element_text(angle = 90), 
+                axis.text=element_text(size=14),
+                axis.title=element_text(size=16,face="bold"),
+                strip.text.x = element_text(size = 14))
+      }
+    }
+    
     g
     
   })
@@ -276,7 +445,7 @@ shinyServer(function(session, input, output) {
   output$viztotalObs <- renderInfoBox({
     newData <- getFilteredVizData()
     infoBox(
-      paste0("Listings"), paste0("Total Airbnb Listings based on above filters are ", nrow(newData)), icon = icon("globe"),
+      paste0("Listings"), paste0("Total Airbnb Listings (Based on above filters) are: ", nrow(newData)), icon = icon("globe"),
       color = "red", fill = TRUE
     )
   })
