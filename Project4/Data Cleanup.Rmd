@@ -40,15 +40,15 @@ df1 <- df1 %>% rename("Host_Indentity" = host_identity_verified,
                       "Neighbourhood" = neighbourhood,
                       "Lat" = lat,
                       "Long" = long,
-                      "Instant_Booking" = instant_bookable,
-                      "Cancel_Policy" = cancellation_policy,
+                      "Available_Now" = instant_bookable,
+                      "Cancellation" = cancellation_policy,
                       "Type" = `room type`,
                       "Make_Year" = `Construction year`,
                       "Price" = price,
                       "Service_Fee" = `service fee`,
                       "Min_Stay" = `minimum nights`,
                       "Rating" = `review rate number`,
-                      "Other_Listings" = `calculated host listings count`,
+                      "Host_Listings" = `calculated host listings count`,
                       "Availability" = `availability 365`)
 
 df1
