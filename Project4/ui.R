@@ -164,11 +164,12 @@ body <- dashboardBody(
               pickerInput(
                 inputId = "corrCols", 
                 label = "Select Variables to see Corrplot between them:", 
-                choices = c("Price", "Make_Year", "Service_Fee", "Lat", "Long", "Min_Stay", "Host_Listings", "Rating"), 
+                choices = c("Price", "Make_Year", "Service_Fee", "Lat", "Long", "Min_Stay", "Host_Listings", "Rating", "Availability"), 
                 options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                 multiple = TRUE,
                 selected = c("Price", "Make_Year", "Service_Fee", "Rating")
-              )),
+              )
+              ),
               column(2,
                      selectizeInput("corRating", "Select first Variable to see its Plot with second Variable:", names(readData()), selected = "Availability")
                      ),
@@ -241,21 +242,114 @@ body <- dashboardBody(
     tabItem(tabName = "modelling",
             
             ## TABS
+            fluidPage(
             fluidRow(
-              tabBox(
-                title = "First tabBox",
-                # The id lets us use input$tabset1 on the server to find the current tab
+              tabBox(title = "Set Model Details",
                 id = "tabset1",
-                tabPanel("Tab1", "First tab content"),
-                tabPanel("Tab2", "Tab content 2")
+                tabPanel("Modeling Info", "First tab content"),
+                
+                tabPanel("Model Fitting", 
+                         fluidRow(
+                           column(12,
+                         box(
+                           h4("Response Variable: ", strong("Rating", style = "color:red;")),
+                             h5("Model Type: Classification"),
+                             sliderInput("testTrainPartition", h5(strong("Select the proportion of "), strong("Train/Test", style = "color:red;"), strong(" data ratio for each models below")), min = 0, max = 1, step = 0.05, value = 0.7),
+                             collapsible = TRUE,
+                             solidHeader = TRUE
+                           )
+                         )
+                         ),
+                         
+                         fluidRow(
+                           
+                           column(4,
+                           box(title = h5("Set tuning parameters to build", strong("GLM Regression", style = "color:red;"), " model"), 
+                               
+                               pickerInput(
+                                 inputId = "varsForGLM", 
+                                 label = "Select All predictor variables you want to use to Train the GLM Regression Model:", 
+                                 choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
+                                 options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                 multiple = TRUE,
+                                 selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
+                               ),
+                               br(),
+                               sliderInput("cvGLM", "Set the Cross Validation K-Folds", min = 2, max = 15, step = 1, value = 10),
+                               
+                               collapsible = TRUE,
+                               solidHeader = TRUE,
+                               #background = "red",
+                               width = 2000
+                               )
+                               ),
+                           
+                           column(4,
+                           box(title = h5("Set tuning parameters to build the ", strong("Classification Tree", style = "color:red;"), " Model"),
+                               pickerInput(
+                                 inputId = "varsForCT", 
+                                 label = "Select All predictor variables you want to use to Train the Classification Tree Model:", 
+                                 choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
+                                 options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                 multiple = TRUE,
+                                 selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
+                               ),
+                               br(),
+                               sliderInput("cvCT", "Set the Repeated Cross Validation K-Folds", min = 2, max = 15, step = 1, value = 5),
+                               br(),
+                               sliderInput("tuneLengthCT", "Set the Tune Length", min = 1, max = 15, step = 1, value = 10),
+                               br(),
+                               sliderInput("cpCT", "Set the Range of 'cp' parameter value", min = 0, max = 0.5, step = 0.01, value = c(0.1,0.2)),
+                               br(),
+                               numericInput("cpSkipCT", "Set the increment value of cp", min = 0.005, max = 0.05, value = 0.01),
+                               collapsible = TRUE,
+                               solidHeader = TRUE,
+                               #background = "red",
+                               width = 2000
+                           )
+                           ),
+                           
+                           column(4,
+                           box(title = h5("Set tuning parameters to build the ", strong("Random Forest", style = "color:red;"), " Model"), 
+                               pickerInput(
+                                 inputId = "varsForRF", 
+                                 label = "Select All predictor variables you want to use to Train the Random Forest Model:", 
+                                 choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
+                                 options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                 multiple = TRUE,
+                                 selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
+                               ),
+                               br(),
+                               sliderInput("cvRF", "Set the Repeated Cross Validation K-Folds", min = 2, max = 15, step = 1, value = 7),
+                               br(),
+                               sliderInput("cvRF", "Set the Range of 'mtry' parameter value", min = 1, max = 20, step = 1, value = c(3, 10)),
+                               br(),
+                               sliderInput("tunelengthRF", "Set the 'tunelength' parameter value ", min = 1, max = 15, step = 1, value = 10),
+                               br(),
+                               collapsible = TRUE,
+                               solidHeader = TRUE,
+                               #background = "red",
+                               width = 2000
+                           )
+                           )
+                           
+                         ),
+                         actionButton("buildModels", strong("Click here to build all Models", style = "color:red;"), width = 770)
+                         
+                         ),
+                
+                tabPanel("Prediction", "Tab content 3")
               ),
-              tabBox(
-                side = "right", height = "250px",
-                selected = "Tab3",
-                tabPanel("Tab1", "Tab content 1"),
-                tabPanel("Tab2", "Tab content 2"),
-                tabPanel("Tab3", "Note that when side=right, the tab order is reversed.")
+              
+              tabBox(title = "See Model Statistics",
+                id = "tabset2",
+                tabPanel("Generalized Linear Regression Model", "First tab content"),
+                
+                tabPanel("Classification Tree", "Hello"),
+                
+                tabPanel("Random Forest", "Tab content 3")
               )
+            )
             ),
     )
   )
