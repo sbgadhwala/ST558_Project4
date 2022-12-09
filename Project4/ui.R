@@ -218,7 +218,7 @@ body <- dashboardBody(
                          width = 800
                      )
               ),
-              column(8, box(title = h4("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)"),leafletOutput("geoPlot", height = 650, width = 1000),
+              column(8, box(title = h4(strong("Geospatially represented Filtered and Arranged Airbnb Listings (May include multiple listings at a single location)")),leafletOutput("geoPlot", height = 650, width = 1000),
                             collapsible = TRUE,
                             solidHeader = TRUE,
                             width = 800))
@@ -276,19 +276,17 @@ body <- dashboardBody(
                                  choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
                                  options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                                  multiple = TRUE,
-                                 selected = c("Borough", "Cancellation", "Price")
+                                 selected = c("Borough", "Cancellation", "Price", "Type")
                                ),
-                             h6(strong("Tip: As the number of selected variables increase, the time taken to build the model also increases", style = "color:black;")),
+                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increases", style = "color:black;")),
                                br(),
                                sliderInput("cvGLM", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 3),
-                               
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
                                width = 2000,
                                br(),
-                             
-                               actionButton("buildGLMModel", strong("Run only GLM Model", style = "color:red;"))
+                               actionButton("buildGLMModel", strong("Run only GLM Model", style = "color:red;"), width = 215)
                                )
                                ),
                            
@@ -302,12 +300,13 @@ body <- dashboardBody(
                                  choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
                                  options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                                  multiple = TRUE,
-                                 selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
+                                 selected = c("Borough", "Cancellation", "Price", "Type")
                                ),
+                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increases", style = "color:black;")),
                                br(),
-                               sliderInput("cvCT", h5(strong("Set the Repeated Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 5),
+                               sliderInput("cvCT", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 5),
                                br(),
-                               sliderInput("tuneLengthCT", h5(strong("Set the Tune Length", style = "color:black;")), min = 1, max = 15, step = 1, value = 10),
+                               sliderInput("tuneLengthCT", h5(strong("Set the 'tunelength' value", style = "color:black;")), min = 1, max = 15, step = 1, value = 10),
                                br(),
                                sliderInput("cpCT", h5(strong("Set the Range of 'cp' parameter value", style = "color:black;")), min = 0, max = 0.5, step = 0.01, value = c(0.1,0.2)),
                                br(),
@@ -315,7 +314,9 @@ body <- dashboardBody(
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
-                               width = 2000
+                               width = 2000,
+                             br(),
+                             actionButton("buildCTModel", strong("Run only CT Model", style = "color:red;"), width = 215)
                            )
                            ),
                            
@@ -329,26 +330,31 @@ body <- dashboardBody(
                                  choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
                                  options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                                  multiple = TRUE,
-                                 selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
+                                 selected = c("Borough", "Cancellation", "Price", "Type")
                                ),
+                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increases", style = "color:black;")),
                                br(),
-                               sliderInput("cvRF", h5(strong("Set the Repeated Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 7),
+                               sliderInput("cvRF", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 2),
                                br(),
-                               sliderInput("cvRF", h5(strong("Set the Range of 'mtry' parameter value", style = "color:black;")), min = 1, max = 20, step = 1, value = c(3, 10)),
+                               sliderInput("tunelengthRF", h5(strong("Set the 'tunelength' value", style = "color:black;")), min = 1, max = 15, step = 1, value = 2),
+                             
                                br(),
-                               sliderInput("tunelengthRF", h5(strong("Set the 'tunelength' parameter value", style = "color:black;")), min = 1, max = 15, step = 1, value = 10),
+                               sliderInput("rfmTry", h5(strong("Set the Range of 'mtry' parameter value", style = "color:black;")), min = 1, max = 20, step = 1, value = c(1, 2)),
                                br(),
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
-                               width = 2000
+                               width = 2000,
+                             br(),
+                             
+                             actionButton("buildRFModel", strong("Run only RF Model", style = "color:red;"), width = 215)
                            )
                            )
                            
                          ),
                          br(),
                          
-                         actionButton("buildModels", strong("Run all Models", style = "color:red;"), width = 770)
+                         actionButton("buildModels", strong("RUN ALL MODELS", style = "color:red;"), width = 770)
                          
                          ),
                 
@@ -364,7 +370,7 @@ body <- dashboardBody(
                             verbatimTextOutput("GLMDetails"),
                             type = 6, color = "red"
                             ),
-                         
+                         br(),
                          h4(strong("Fit Statistics of Generalized Linear Regression Model on Testing Data set:")),
                          shinycssloaders::withSpinner(
                            verbatimTextOutput("GLMTestMetrics"),
@@ -372,9 +378,39 @@ body <- dashboardBody(
                          )
                          ),
                 
-                tabPanel("Classification Tree", "Hello"),
+                tabPanel("Classification Tree", 
+                         h4(strong("Fit Statistics and Summary of Classification Tree Model:")),
+                         
+                         shinycssloaders::withSpinner(
+                           verbatimTextOutput("CTDetails"),
+                           type = 6, color = "red"
+                         ),
+                         br(),
+                         h4(strong("Fit Statistics of Classification Tree Model on Testing Data set:")),
+                         shinycssloaders::withSpinner(
+                           verbatimTextOutput("CTTestMetrics"),
+                           type = 6, color = "red"),
+                         br(),
+                         h4(strong("Variable Importance Plot:")),
+                         plotOutput("CTVarImpGraph")
+                         ),
                 
-                tabPanel("Random Forest", "Tab content 3")
+                tabPanel("Random Forest", 
+                         h4(strong("Fit Statistics and Summary of Random Forest Model:")),
+                         
+                         shinycssloaders::withSpinner(
+                           verbatimTextOutput("RFDetails"),
+                           type = 6, color = "red"
+                         ),
+                         br(),
+                         h4(strong("Fit Statistics of Random Forest Model on Testing Data set:")),
+                         shinycssloaders::withSpinner(
+                           verbatimTextOutput("RFTestMetrics"),
+                           type = 6, color = "red"),
+                         br(),
+                         h4(strong("Variable Importance Plot:")),
+                           plotOutput("RFVarImpGraph")
+                         )
               )
             )
             ),

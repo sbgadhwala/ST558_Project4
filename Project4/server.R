@@ -489,14 +489,35 @@ shinyServer(function(session, input, output) {
   
   ##--------------------------------------Modelling TAB-------------------------------------------------
   
-      ##------------------------------GLM---------------------------------------
   output$GLMDetails <- renderPrint({
-    paste0("From the 'Fit Model' tab, click on Build Models to get summary and stats")
+    paste0("From the 'Fit Model' tab, click on Build Models to get summary and stats of GLM Model")
   })
   
   output$GLMTestMetrics <- renderPrint({
-    paste0("Once the model is fit, model statistics will appear here")
+    paste0("Once the model is built, fit statistics will appear here")
   })
+  
+  output$CTDetails <- renderPrint({
+    paste0("From the 'Fit Model' tab, click on Build Models to get summary of Classification Tree Model")
+  })
+  
+  output$CTTestMetrics <- renderPrint({
+    paste0("Once the model is built, fit statistics will appear here")
+  })
+  
+  output$RFDetails <- renderPrint({
+    paste0("From the 'Fit Model' tab, click on Build Models to get summary of Random Forest Model")
+  })
+  
+  output$RFTestMetrics <- renderPrint({
+    paste0("Once the model is built, fit statistics will appear here")
+  })
+  
+  
+  
+  
+  
+  
   
   observeEvent(input$buildGLMModel, {
     
@@ -554,10 +575,149 @@ shinyServer(function(session, input, output) {
     })
     
     output$GLMTestMetrics <- renderPrint({
-      data.frame(tibble(Model = c("GLM"), Accuracy = c(stats[[1]]), Kappa = c(stats[[2]])))
+      stats
     })
     
+    
   })
+  
+  observeEvent(input$buildCTModel, {
+    
+    output$CTDetails <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    output$CTTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    regData <- readData()
+    
+    regData$Host_Identity <- as_factor(regData$Host_Identity)
+    regData$Borough <- as_factor(regData$Borough)
+    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
+    regData$Available_Now <-as_factor(regData$Available_Now)
+    regData$Cancellation <- as_factor(regData$Cancellation)
+    regData$Type <- as_factor(regData$Type)
+    regData$Rating <- as_factor(regData$Rating)
+    
+    
+    rating <- regData$Rating
+    
+    selectedCols = input$varsForCT
+    
+    modelDf <- regData[, selectedCols, drop=FALSE]
+    
+    modelDf$Rating <- rating
+    modelDf$Rating <- as_factor(modelDf$Rating)
+    
+    
+    
+    set.seed(1)
+    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    
+    trainData <- modelDf[trainIndex, ]
+    testData <- modelDf[-trainIndex, ]
+    
+    ctModel <- train(Rating ~ .,
+                     data = trainData,
+                     method = "rpart",
+                     trControl = trainControl(method = "cv", number = input$cvCT),
+                     tuneLength = input$tuneLengthCT,
+                     tuneGrid = expand.grid(cp = seq(input$cpCT[1], input$cpCT[2], by=input$cpSkipCT))
+    )
+    
+    cm_CT <- confusionMatrix(data = predict(ctModel, newdata = testData),
+                             reference = testData$Rating)
+    
+    ps_CT <- postResample(predict(ctModel, newdata = testData), testData$Rating)
+    
+    output$CTDetails <- renderPrint({
+      ctModel
+    })
+    
+    
+    output$CTTestMetrics <- renderPrint({
+      #cm_CT
+      ps_CT
+    })
+    
+    output$CTVarImpGraph <- renderPlot({
+      plot(varImp(ct_model))
+    })
+    
+    
+  })
+  
+  observeEvent(input$buildRFModel, {
+    
+    output$RFDetails <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    output$RFTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    regData <- readData()
+    
+    regData$Host_Identity <- as_factor(regData$Host_Identity)
+    regData$Borough <- as_factor(regData$Borough)
+    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
+    regData$Available_Now <-as_factor(regData$Available_Now)
+    regData$Cancellation <- as_factor(regData$Cancellation)
+    regData$Type <- as_factor(regData$Type)
+    regData$Rating <- as_factor(regData$Rating)
+    
+    
+    rating <- regData$Rating
+    
+    selectedCols = input$varsForRF
+    
+    modelDf <- regData[, selectedCols, drop=FALSE]
+    
+    modelDf$Rating <- rating
+    modelDf$Rating <- as_factor(modelDf$Rating)
+    
+    
+    
+    set.seed(1)
+    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    
+    trainData <- modelDf[trainIndex, ]
+    testData <- modelDf[-trainIndex, ]
+    
+    rfModel <- train(Rating ~ .,
+                     data = trainData,
+                     method = "rf",
+                     trControl = trainControl(method = "cv", number = input$cvRF),
+                     tuneLength = input$tuneLengthRF,
+                     tuneGrid = expand.grid(mtry = input$rfmTry[1]:input$rfmTry[2])
+    )
+    
+    cm_RF <- confusionMatrix(data = predict(rfModel, newdata = testData),
+                             reference = testData$Rating)
+    
+    ps_RF <- postResample(predict(rfModel, newdata = testData), testData$Rating)
+    
+    output$RFDetails <- renderPrint({
+      rfModel
+    })
+    
+    
+    output$RFTestMetrics <- renderPrint({
+      ps_RF
+    })
+    
+    output$RFVarImpGraph <- renderPlot({
+      g <- plot(varImp(rfModel))
+      g
+    })
+    
+    
+  })
+  
+
   
   observeEvent(input$buildModels, {
     
@@ -582,32 +742,42 @@ shinyServer(function(session, input, output) {
     
     rating <- regData$Rating
     
-    selectedCols = input$varsForGLM
     
-    modelDf <- regData[, selectedCols, drop=FALSE]
+    #---------GLM---------------------------
+    output$CTDetails <- renderPrint({
+      "Model Build in Progress"
+    })
     
-    modelDf$Rating <- rating
-    modelDf$Rating <- as_factor(modelDf$Rating)
+    output$CTTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    selectedCols1 = input$varsForGLM
+    
+    modelDf1 <- regData[, selectedCols1, drop=FALSE]
+    
+    modelDf1$Rating <- rating
+    modelDf1$Rating <- as_factor(modelDf1$Rating)
     
     
     
     set.seed(1)
-    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    trainIndex <- createDataPartition(modelDf1$Rating, p=input$testTrainPartition, list = FALSE)
     
-    trainData <- modelDf[trainIndex, ]
-    testData <- modelDf[-trainIndex, ]
+    trainData1 <- modelDf1[trainIndex, ]
+    testData1 <- modelDf1[-trainIndex, ]
     
     glm_model <- train(
       Rating ~.,
-      data = trainData,
+      data = trainData1,
       trControl = trainControl(method = "cv", number = input$cvGLM),
       preprocess = c("center", "scale"),
       method = "glmnet"
     )
     
-    predGLM <- predict(glm_model, newdata = testData)
+    predGLM <- predict(glm_model, newdata = testData1)
     
-    stats <- postResample(predGLM, obs = testData$Rating)
+    glm_stats <- postResample(predGLM, obs = testData1$Rating)
     
     
     output$GLMDetails <- renderPrint({
@@ -615,8 +785,106 @@ shinyServer(function(session, input, output) {
       })
     
     output$GLMTestMetrics <- renderPrint({
-      data.frame(tibble(Model = c("GLM"), Accuracy = c(stats[[1]]), Kappa = c(stats[[2]])))
+      glm_stats
     })
+
+    
+    
+    #-------------CT-------------------
+    selectedCols2 = input$varsForCT
+    
+    modelDf2 <- regData[, selectedCols2, drop=FALSE]
+    
+    modelDf2$Rating <- rating
+    modelDf2$Rating <- as_factor(modelDf2$Rating)
+    
+    
+    
+    set.seed(1)
+    ##trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    
+    trainData2 <- modelDf2[trainIndex, ]
+    testData2 <- modelDf2[-trainIndex, ]
+    
+    ctModel <- train(Rating ~ .,
+                     data = trainData2,
+                     method = "rpart",
+                     trControl = trainControl(method = "cv", number = input$cvCT),
+                     tuneLength = input$tuneLengthCT,
+                     tuneGrid = expand.grid(cp = seq(input$cpCT[1], input$cpCT[2], by=input$cpSkipCT))
+    )
+    
+    cm_CT <- confusionMatrix(data = predict(ctModel, newdata = testData2),
+                             reference = testData2$Rating)
+    
+    ps_CT <- postResample(predict(ctModel, newdata = testData2), testData2$Rating)
+    
+    output$CTDetails <- renderPrint({
+      ctModel
+    })
+    
+    
+    output$CTTestMetrics <- renderPrint({
+      ps_CT
+    })
+    
+    output$CTVarImpGraph <- renderPlot({
+      plot(varImp(ct_model))
+    })
+    
+    
+    #-----------RF------------------
+    
+    output$RFDetails <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    output$RFTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    selectedCols3 = input$varsForRF
+    
+    modelDf3 <- regData[, selectedCols3, drop=FALSE]
+    
+    modelDf3$Rating <- rating
+    modelDf3$Rating <- as_factor(modelDf3$Rating)
+    
+    
+    
+    set.seed(1)
+    #trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    
+    trainData3 <- modelDf3[trainIndex, ]
+    testData3 <- modelDf3[-trainIndex, ]
+    
+    rfModel <- train(Rating ~ .,
+                     data = trainData3,
+                     method = "rf",
+                     trControl = trainControl(method = "cv", number = input$cvRF),
+                     tuneLength = input$tuneLengthRF,
+                     tuneGrid = expand.grid(mtry = input$rfmTry[1]:input$rfmTry[2])
+    )
+    
+    cm_RF <- confusionMatrix(data = predict(rfModel, newdata = testData3),
+                             reference = testData3$Rating)
+    
+    ps_RF <- postResample(predict(rfModel, newdata = testData3), testData3$Rating)
+    
+    output$RFDetails <- renderPrint({
+      rfModel
+    })
+    
+    
+    output$RFTestMetrics <- renderPrint({
+      ps_RF
+    })
+    
+    output$RFVarImpGraph <- renderPlot({
+      g <- plot(varImp(rfModel))
+      g
+    })
+    
     
   })
 
