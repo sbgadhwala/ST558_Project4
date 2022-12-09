@@ -8,6 +8,7 @@ library(DT)
 library(caret)
 library(leaflet)
 library(corrplot)
+library(shinycssloaders)
 
 source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
 
@@ -254,7 +255,7 @@ body <- dashboardBody(
                          box(
                            h4("Response Variable: ", strong("Rating", style = "color:red;")),
                              h5("Model Type: Classification"),
-                             sliderInput("testTrainPartition", h5(strong("Select the proportion of "), strong("Train/Test", style = "color:red;"), strong(" data ratio for each models below")), min = 0, max = 1, step = 0.05, value = 0.7),
+                             sliderInput("testTrainPartition", h5(strong("Select the proportion of "), strong("Train/Test", style = "color:red;"), strong(" data ratio for each models below")), min = 0, max = 1, step = 0.01, value = 0.7),
                              collapsible = TRUE,
                              solidHeader = TRUE,
                            width = 12
@@ -264,83 +265,90 @@ body <- dashboardBody(
                          
                          fluidRow(
                            
-                           column(4, align="center", style = "background-color:grey;",
+                           column(4, align="left",
                                   br(),
-                           box(
-                             title = h5("Set tuning parameters to build", strong("GLM Regression", style = "color:red;"), " model"), 
+                           box(style = "background-color:#858585;",
+                             title = h5("Set tuning parameters to build", strong("GLM Regression", style = "color:red;"), " model", style = "color:white;"), 
                                
                                pickerInput(
                                  inputId = "varsForGLM", 
-                                 label = "Select All predictor variables you want to use to Train the GLM Regression Model:", 
+                                 label = h5(strong("Select All predictor variables you want to use to Train the GLM Regression Model:", style = "color:black;")), 
                                  choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
                                  options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                                  multiple = TRUE,
-                                 selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
+                                 selected = c("Borough", "Cancellation", "Price")
                                ),
+                             h6(strong("Tip: As the number of selected variables increase, the time taken to build the model also increases", style = "color:black;")),
                                br(),
-                               sliderInput("cvGLM", "Set the Cross Validation K-Folds", min = 2, max = 15, step = 1, value = 10),
+                               sliderInput("cvGLM", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 3),
                                
                                collapsible = TRUE,
                                solidHeader = TRUE,
-                               #background = "black",
-                               width = 2000
+                               background = "black",
+                               width = 2000,
+                               br(),
+                             
+                               actionButton("buildGLMModel", strong("Run only GLM Model", style = "color:red;"))
                                )
                                ),
                            
-                           column(4, align="center", style = "background-color:#b0b0b0;",
+                           column(4, align="left",
                                   br(),
-                           box(title = h5("Set tuning parameters to build the ", strong("Classification Tree", style = "color:red;"), " Model"),
+                           box(style = "background-color:#858585;",
+                             title = h5("Set tuning parameters to build the ", strong("Classification Tree", style = "color:red;"), " Model", style = "color:white;"),
                                pickerInput(
                                  inputId = "varsForCT", 
-                                 label = "Select All predictor variables you want to use to Train the Classification Tree Model:", 
+                                 label = h5(strong("Select All predictor variables you want to use to Train the Classification Tree Model:", style = "color:black;")), 
                                  choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
                                  options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                                  multiple = TRUE,
                                  selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
                                ),
                                br(),
-                               sliderInput("cvCT", "Set the Repeated Cross Validation K-Folds", min = 2, max = 15, step = 1, value = 5),
+                               sliderInput("cvCT", h5(strong("Set the Repeated Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 5),
                                br(),
-                               sliderInput("tuneLengthCT", "Set the Tune Length", min = 1, max = 15, step = 1, value = 10),
+                               sliderInput("tuneLengthCT", h5(strong("Set the Tune Length", style = "color:black;")), min = 1, max = 15, step = 1, value = 10),
                                br(),
-                               sliderInput("cpCT", "Set the Range of 'cp' parameter value", min = 0, max = 0.5, step = 0.01, value = c(0.1,0.2)),
+                               sliderInput("cpCT", h5(strong("Set the Range of 'cp' parameter value", style = "color:black;")), min = 0, max = 0.5, step = 0.01, value = c(0.1,0.2)),
                                br(),
-                               numericInput("cpSkipCT", "Set the increment value of cp", min = 0.005, max = 0.05, value = 0.01),
+                               numericInput("cpSkipCT", h5(strong("Set the increment value of cp", style = "color:black;")), min = 0.005, max = 0.05, value = 0.01),
                                collapsible = TRUE,
                                solidHeader = TRUE,
-                               #background = "black",
+                               background = "black",
                                width = 2000
                            )
                            ),
                            
-                           column(4, align="center", style = "background-color:grey;",
+                           column(4, align="left",
                                   br(),
-                           box(title = h5("Set tuning parameters to build the ", strong("Random Forest", style = "color:red;"), " Model"), 
+                           box(style = "background-color:#858585;",
+                             title = h5("Set tuning parameters to build the ", strong("Random Forest", style = "color:red;"), " Model", style = "color:white;"), 
                                pickerInput(
                                  inputId = "varsForRF", 
-                                 label = "Select All predictor variables you want to use to Train the Random Forest Model:", 
+                                 label = h5(strong("Select All predictor variables you want to use to Train the Random Forest Model:", style = "color:black;")), 
                                  choices = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability"), 
                                  options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
                                  multiple = TRUE,
                                  selected = c("Host_Identity", "Borough", "Neighbourhood", "Lat", "Long", "Available_Now", "Cancellation", "Type", "Make_Year", "Price", "Service_Fee",  "Min_Stay", "Host_Listings", "Availability")
                                ),
                                br(),
-                               sliderInput("cvRF", "Set the Repeated Cross Validation K-Folds", min = 2, max = 15, step = 1, value = 7),
+                               sliderInput("cvRF", h5(strong("Set the Repeated Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 7),
                                br(),
-                               sliderInput("cvRF", "Set the Range of 'mtry' parameter value", min = 1, max = 20, step = 1, value = c(3, 10)),
+                               sliderInput("cvRF", h5(strong("Set the Range of 'mtry' parameter value", style = "color:black;")), min = 1, max = 20, step = 1, value = c(3, 10)),
                                br(),
-                               sliderInput("tunelengthRF", "Set the 'tunelength' parameter value ", min = 1, max = 15, step = 1, value = 10),
+                               sliderInput("tunelengthRF", h5(strong("Set the 'tunelength' parameter value", style = "color:black;")), min = 1, max = 15, step = 1, value = 10),
                                br(),
                                collapsible = TRUE,
                                solidHeader = TRUE,
-                               #background = "black",
+                               background = "black",
                                width = 2000
                            )
                            )
                            
                          ),
                          br(),
-                         actionButton("buildModels", strong("Build all Models", style = "color:red;"), width = 770)
+                         
+                         actionButton("buildModels", strong("Run all Models", style = "color:red;"), width = 770)
                          
                          ),
                 
@@ -350,8 +358,19 @@ body <- dashboardBody(
               tabBox(title = "See Model Statistics",
                 id = "tabset2",
                 tabPanel("Generalized Linear Regression Model", 
-                         h4(strong("Summary of Generalized Linear Regression Model:")),
-                         textOutput("successruntext")),
+                         h4(strong("Fit Statistics and Summary of Generalized Linear Regression Model:")),
+                         
+                         shinycssloaders::withSpinner(
+                            verbatimTextOutput("GLMDetails"),
+                            type = 6, color = "red"
+                            ),
+                         
+                         h4(strong("Fit Statistics of Generalized Linear Regression Model on Testing Data set:")),
+                         shinycssloaders::withSpinner(
+                           verbatimTextOutput("GLMTestMetrics"),
+                           type = 6, color = "red"
+                         )
+                         ),
                 
                 tabPanel("Classification Tree", "Hello"),
                 

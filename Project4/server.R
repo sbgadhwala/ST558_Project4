@@ -8,6 +8,7 @@ library(DT)
 library(caret)
 library(leaflet)
 library(corrplot)
+library(shinycssloaders)
 
 
 source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
@@ -488,15 +489,134 @@ shinyServer(function(session, input, output) {
   
   ##--------------------------------------Modelling TAB-------------------------------------------------
   
-  output$successruntext <- renderText({
+      ##------------------------------GLM---------------------------------------
+  output$GLMDetails <- renderPrint({
     paste0("From the 'Fit Model' tab, click on Build Models to get summary and stats")
+  })
+  
+  output$GLMTestMetrics <- renderPrint({
+    paste0("Once the model is fit, model statistics will appear here")
+  })
+  
+  observeEvent(input$buildGLMModel, {
+    
+    output$GLMDetails <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    output$GLMTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    regData <- readData()
+    
+    regData$Host_Identity <- as_factor(regData$Host_Identity)
+    regData$Borough <- as_factor(regData$Borough)
+    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
+    regData$Available_Now <-as_factor(regData$Available_Now)
+    regData$Cancellation <- as_factor(regData$Cancellation)
+    regData$Type <- as_factor(regData$Type)
+    regData$Rating <- as_factor(regData$Rating)
+    
+    
+    rating <- regData$Rating
+    
+    selectedCols = input$varsForGLM
+    
+    modelDf <- regData[, selectedCols, drop=FALSE]
+    
+    modelDf$Rating <- rating
+    modelDf$Rating <- as_factor(modelDf$Rating)
+    
+    
+    
+    set.seed(1)
+    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    
+    trainData <- modelDf[trainIndex, ]
+    testData <- modelDf[-trainIndex, ]
+    
+    glm_model <- train(
+      Rating ~.,
+      data = trainData,
+      trControl = trainControl(method = "cv", number = input$cvGLM),
+      preprocess = c("center", "scale"),
+      method = "glmnet"
+    )
+    
+    predGLM <- predict(glm_model, newdata = testData)
+    
+    stats <- postResample(predGLM, obs = testData$Rating)
+    
+    
+    output$GLMDetails <- renderPrint({
+      glm_model
+    })
+    
+    output$GLMTestMetrics <- renderPrint({
+      data.frame(tibble(Model = c("GLM"), Accuracy = c(stats[[1]]), Kappa = c(stats[[2]])))
+    })
+    
   })
   
   observeEvent(input$buildModels, {
     
-    output$successruntext <- renderText({
-      paste0("")
+    output$GLMDetails <- renderPrint({
+    "Model Build in Progress"
+    })
+    
+    output$GLMTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    regData <- readData()
+    
+    regData$Host_Identity <- as_factor(regData$Host_Identity)
+    regData$Borough <- as_factor(regData$Borough)
+    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
+    regData$Available_Now <-as_factor(regData$Available_Now)
+    regData$Cancellation <- as_factor(regData$Cancellation)
+    regData$Type <- as_factor(regData$Type)
+    regData$Rating <- as_factor(regData$Rating)
+
+    
+    rating <- regData$Rating
+    
+    selectedCols = input$varsForGLM
+    
+    modelDf <- regData[, selectedCols, drop=FALSE]
+    
+    modelDf$Rating <- rating
+    modelDf$Rating <- as_factor(modelDf$Rating)
+    
+    
+    
+    set.seed(1)
+    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
+    
+    trainData <- modelDf[trainIndex, ]
+    testData <- modelDf[-trainIndex, ]
+    
+    glm_model <- train(
+      Rating ~.,
+      data = trainData,
+      trControl = trainControl(method = "cv", number = input$cvGLM),
+      preprocess = c("center", "scale"),
+      method = "glmnet"
+    )
+    
+    predGLM <- predict(glm_model, newdata = testData)
+    
+    stats <- postResample(predGLM, obs = testData$Rating)
+    
+    
+    output$GLMDetails <- renderPrint({
+      glm_model
       })
+    
+    output$GLMTestMetrics <- renderPrint({
+      data.frame(tibble(Model = c("GLM"), Accuracy = c(stats[[1]]), Kappa = c(stats[[2]])))
+    })
     
   })
 
