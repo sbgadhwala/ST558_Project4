@@ -284,11 +284,11 @@ body <- dashboardBody(
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
-                               width = 2000,
-                               conditionalPanel("input.selectModel.length != 0", 
-                                              br(),
-                                              actionButton("buildGLMModel", strong("Rebuild GLM Model", style = "color:red;"), width = 215)
-                               )
+                               width = 2000
+                               #conditionalPanel("input.selectModel.length != 0", 
+                              #                br(),
+                              #                actionButton("buildGLMModel", strong("Rebuild GLM Model", style = "color:red;"), width = 215)
+                              # )
                                #br(),
                                #actionButton("buildGLMModel", strong("Run only GLM Model", style = "color:red;"), width = 215)
                                )
@@ -318,11 +318,11 @@ body <- dashboardBody(
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
-                               width = 2000,
-                             conditionalPanel("input.selectModel.length != 0", 
-                                              br(),
-                                              actionButton("buildCTModel", strong("Rebuild CT Model", style = "color:red;"), width = 215)
-                             )
+                               width = 2000
+                             #conditionalPanel("input.selectModel.length != 0", 
+                            #                  br(),
+                            #                  actionButton("buildCTModel", strong("Rebuild CT Model", style = "color:red;"), width = 215)
+                            #)
                              #br(),
                              #actionButton("buildCTModel", strong("Run only CT Model", style = "color:red;"), width = 215)
                            )
@@ -352,12 +352,12 @@ body <- dashboardBody(
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
-                               width = 2000,
+                               width = 2000
                              
-                             conditionalPanel("input.selectModel.length != 0", 
-                                              br(),
-                                              actionButton("buildRFModel", strong("Rebuild RF Model", style = "color:red;"), width = 215)
-                             )
+                             #conditionalPanel("input.selectModel.length != 0", 
+                            #                  br(),
+                            #                  actionButton("buildRFModel", strong("Rebuild RF Model", style = "color:red;"), width = 215)
+                            # )
                            )
                            )
                            
@@ -378,7 +378,8 @@ body <- dashboardBody(
                          conditionalPanel("input.selectModel == 'Classification Tree'",
                                           br(),
                                           h5(strong("You have selected ", strong("Classification Tree", style = "color:red;"), "Model for prediction")),
-                                          h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction:")),
+                                          h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction.")),
+                                          h5(strong("This is a dynamic page, you can change the inputs and again click on 'Predict' to make a prediction.")),
                                           br(),
                                           conditionalPanel("input.varsForCT.indexOf('Host_Identity')!=-1",
                                                            selectInput("predHostICT", "Select if host is verified:", choices = unique(readData()$Host_Identity), selected = readData()$Host_Identity[1])),
@@ -411,7 +412,7 @@ body <- dashboardBody(
                                           br(),
                                           actionButton("predictCTBtn", strong("Predict", style = "color:red;")),
                                           br(),
-                                          h4(strong("Prediction using Classification Tree model:")),
+                                          h4(strong("Predicted Rating on a scale of 1 to 5 using Classification Tree model:")),
                                           shinycssloaders::withSpinner(
                                             verbatimTextOutput("CTPred"),
                                             type = 6, color = "red")
@@ -422,6 +423,8 @@ body <- dashboardBody(
                                           br(),
                                           h5(strong("You have selected ", strong("Generalized Linear Regression", style = "color:red;"), "Model for prediction")),
                                           h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction:")),
+                                          h5(strong("This is a dynamic page, you can change the inputs and again click on 'Predict' to make a prediction.")),
+                                          
                                           br(),
                                           conditionalPanel("input.varsForGLM.indexOf('Host_Identity')!=-1",
                                                            selectInput("predHostIGLM", "Select if host is verified:", choices = unique(readData()$Host_Identity), selected = readData()$Host_Identity[1])),
@@ -454,7 +457,7 @@ body <- dashboardBody(
                                           br(),
                                           actionButton("predictGLMBtn", strong("Predict", style = "color:red;")),
                                           br(),
-                                          h4(strong("Prediction using Generalized Linear Regression model:")),
+                                          h4(strong("Predicted Rating on a scale of 1 to 5 using Generalized Linear Regression model:")),
                                           shinycssloaders::withSpinner(
                                             verbatimTextOutput("GLMPred"),
                                             type = 6, color = "red")
@@ -465,6 +468,8 @@ body <- dashboardBody(
                                           br(),
                                           h5(strong("You have selected ", strong("Random Forest", style = "color:red;"), "Model for prediction")),
                                           h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction:")),
+                                          h5(strong("This is a dynamic page, you can change the inputs and again click on 'Predict' to make a prediction.")),
+                                          
                                           br(),
                                           conditionalPanel("input.varsForRF.indexOf('Host_Identity')!=-1",
                                                            selectInput("predHostIRF", "Select if host is verified:", choices = unique(readData()$Host_Identity), selected = readData()$Host_Identity[1])),
@@ -497,7 +502,7 @@ body <- dashboardBody(
                                           br(),
                                           actionButton("predictRFBtn", strong("Predict", style = "color:red;")),
                                           br(),
-                                          h4(strong("Prediction using Random Forest model:")),
+                                          h4(strong("Predicted Rating on a scale of 1 to 5 using Random Forest model:")),
                                           shinycssloaders::withSpinner(
                                             verbatimTextOutput("RFPred"),
                                             type = 6, color = "red")
@@ -557,10 +562,10 @@ body <- dashboardBody(
                          h4(strong("Fit Statistics of Classification Tree Model on Testing Data set:")),
                          shinycssloaders::withSpinner(
                            verbatimTextOutput("CTTestMetrics"),
-                           type = 6, color = "red"),
-                         br(),
-                         h4(strong("Variable Importance Plot:")),
-                         plotOutput("CTVarImpGraph")
+                           type = 6, color = "red")
+                         #br(),
+                         #h4(strong("Variable Importance Plot:")),
+                         #plotOutput("CTVarImpGraph")
                          ),
                 
                 tabPanel("Random Forest", 

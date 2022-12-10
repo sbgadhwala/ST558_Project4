@@ -514,202 +514,22 @@ shinyServer(function(session, input, output) {
     paste0("Once the model is built, fit statistics will appear here")
   })
   
-  
-  
-  observeEvent(input$buildGLMModel, {
-    
-    output$GLMDetails <- renderPrint({
-      "Model Build in Progress"
-    })
-    
-    output$GLMTestMetrics <- renderPrint({
-      "Model Build in Progress"
-    })
-    
-    regData <- readData()
-    
-    regData$Host_Identity <- as_factor(regData$Host_Identity)
-    regData$Borough <- as_factor(regData$Borough)
-    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
-    regData$Available_Now <-as_factor(regData$Available_Now)
-    regData$Cancellation <- as_factor(regData$Cancellation)
-    regData$Type <- as_factor(regData$Type)
-    regData$Rating <- as_factor(regData$Rating)
-    
-    
-    rating <- regData$Rating
-    
-    selectedCols = input$varsForGLM
-    
-    modelDf <- regData[, selectedCols, drop=FALSE]
-    
-    modelDf$Rating <- rating
-    modelDf$Rating <- as_factor(modelDf$Rating)
-    
-    
-    
-    set.seed(1)
-    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
-    
-    trainData <- modelDf[trainIndex, ]
-    testData <- modelDf[-trainIndex, ]
-    
-    glm_model <- train(
-      Rating ~.,
-      data = trainData,
-      trControl = trainControl(method = "cv", number = input$cvGLM),
-      preprocess = c("center", "scale"),
-      method = "glmnet"
-    )
-    
-    predGLM <- predict(glm_model, newdata = testData)
-    
-    stats <- postResample(predGLM, obs = testData$Rating)
-    
-    
-    output$GLMDetails <- renderPrint({
-      glm_model
-    })
-    
-    output$GLMTestMetrics <- renderPrint({
-      stats
-    })
-    
+  output$GLMPred <- renderPrint({
+    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
   })
   
-  observeEvent(input$buildCTModel, {
-    
-    output$CTDetails <- renderPrint({
-      "Model Build in Progress"
-    })
-    
-    output$CTTestMetrics <- renderPrint({
-      "Model Build in Progress"
-    })
-    
-    regData <- readData()
-    
-    regData$Host_Identity <- as_factor(regData$Host_Identity)
-    regData$Borough <- as_factor(regData$Borough)
-    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
-    regData$Available_Now <-as_factor(regData$Available_Now)
-    regData$Cancellation <- as_factor(regData$Cancellation)
-    regData$Type <- as_factor(regData$Type)
-    regData$Rating <- as_factor(regData$Rating)
-    
-    
-    rating <- regData$Rating
-    
-    selectedCols = input$varsForCT
-    
-    modelDf <- regData[, selectedCols, drop=FALSE]
-    
-    modelDf$Rating <- rating
-    modelDf$Rating <- as_factor(modelDf$Rating)
-    
-    
-    
-    set.seed(1)
-    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
-    
-    trainData <- modelDf[trainIndex, ]
-    testData <- modelDf[-trainIndex, ]
-    
-    ctModel <- train(Rating ~ .,
-                     data = trainData,
-                     method = "rpart",
-                     trControl = trainControl(method = "cv", number = input$cvCT),
-                     tuneLength = input$tuneLengthCT,
-                     tuneGrid = expand.grid(cp = seq(input$cpCT[1], input$cpCT[2], by=input$cpSkipCT))
-    )
-    
-    cm_CT <- confusionMatrix(data = predict(ctModel, newdata = testData),
-                             reference = testData$Rating)
-    
-    ps_CT <- postResample(predict(ctModel, newdata = testData), testData$Rating)
-    
-    output$CTDetails <- renderPrint({
-      ctModel
-    })
-    
-    
-    output$CTTestMetrics <- renderPrint({
-      #cm_CT
-      ps_CT
-    })
-    
-    output$CTVarImpGraph <- renderPlot({
-      plot(varImp(ctModel))
-    })
-    
+  output$CTPred <- renderPrint({
+    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
   })
   
-  observeEvent(input$buildRFModel, {
-    
-    output$RFDetails <- renderPrint({
-      "Model Build in Progress"
-    })
-    
-    output$RFTestMetrics <- renderPrint({
-      "Model Build in Progress"
-    })
-    
-    regData <- readData()
-    
-    regData$Host_Identity <- as_factor(regData$Host_Identity)
-    regData$Borough <- as_factor(regData$Borough)
-    regData$Neighbourhood <- as_factor(regData$Neighbourhood)
-    regData$Available_Now <-as_factor(regData$Available_Now)
-    regData$Cancellation <- as_factor(regData$Cancellation)
-    regData$Type <- as_factor(regData$Type)
-    regData$Rating <- as_factor(regData$Rating)
-    
-    
-    rating <- regData$Rating
-    
-    selectedCols = input$varsForRF
-    
-    modelDf <- regData[, selectedCols, drop=FALSE]
-    
-    modelDf$Rating <- rating
-    modelDf$Rating <- as_factor(modelDf$Rating)
-    
-    
-    
-    set.seed(1)
-    trainIndex <- createDataPartition(modelDf$Rating, p=input$testTrainPartition, list = FALSE)
-    
-    trainData <- modelDf[trainIndex, ]
-    testData <- modelDf[-trainIndex, ]
-    
-    rfModel <- train(Rating ~ .,
-                     data = trainData,
-                     method = "rf",
-                     trControl = trainControl(method = "cv", number = input$cvRF),
-                     tuneLength = input$tuneLengthRF,
-                     tuneGrid = expand.grid(mtry = input$rfmTry[1]:input$rfmTry[2])
-    )
-    
-    cm_RF <- confusionMatrix(data = predict(rfModel, newdata = testData),
-                             reference = testData$Rating)
-    
-    ps_RF <- postResample(predict(rfModel, newdata = testData), testData$Rating)
-    
-    output$RFDetails <- renderPrint({
-      rfModel
-    })
-    
-    
-    output$RFTestMetrics <- renderPrint({
-      ps_RF
-    })
-    
-    output$RFVarImpGraph <- renderPlot({
-      g <- plot(varImp(rfModel))
-      g
-    })
-    
+  output$RFPred <- renderPrint({
+    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
   })
+  
+  
+  glm_model = NULL
+  
+
   
   observeEvent(input$buildModels, {
     
@@ -778,6 +598,62 @@ shinyServer(function(session, input, output) {
     output$GLMTestMetrics <- renderPrint({
       glm_stats
     })
+    
+    observeEvent(input$predictGLMBtn, {
+      
+      predGLMdf <- data.frame(Rating = c(0))
+      
+      if(!is.na(input$predHostIGLM)){
+        predGLMdf$Host_Identity <- as.factor(c(input$predHostIGLM))
+      }
+      if(!is.na(input$predBorGLM)){
+        predGLMdf$Borough <- as.factor(c(input$predBorGLM))
+      }
+      if(!is.na(input$predNeighGLM)){
+        predGLMdf$Neighbours <- as.factor(c(input$predNeighGLM))
+      }
+      if(!is.na(input$predLatGLM)){
+        predGLMdf$Lat <- c(input$predLatGLM)
+      }
+      if(!is.na(input$predLongGLM)){
+        predGLMdf$Long <- c(input$predLongGLM)
+      }
+      if(!is.na(input$predANGLM)){
+        predGLMdf$Available_Now <- as.factor(c(input$predANGLM))
+      }
+      if(!is.na(input$predCanGLM)){
+        predGLMdf$Cancellation <- as.factor(c(input$predCanGLM))
+      }
+      if(!is.na(input$predtypeGLM)){
+        predGLMdf$Type <- as.factor(c(input$predtypeGLM))
+      }
+      if(!is.na(input$predYrGLM)){
+        predGLMdf$Make_Year <- c(input$predYrGLM)
+      }
+      if(!is.na(input$predPriceGLM)){
+        predGLMdf$Price <- c(input$predPriceGLM)
+      }
+      if(!is.na(input$predSerFeeGLM)){
+        predGLMdf$Service_Fee <- c(input$predSerFeeGLM)
+      }
+      if(!is.na(input$predMinStayGLM)){
+        predGLMdf$Min_Stay <- c(input$predMinStayGLM)
+      }
+      if(!is.na(input$predHLGLM)){
+        predGLMdf$Host_Listings <- c(input$predHLGLM)
+      }
+      if(!is.na(input$predAvGLM)){
+        predGLMdf$Availability <- c(input$predAvGLM)
+      }
+      
+      predGLMdf <- tibble(predGLMdf) %>% select(-Rating)
+      
+      GLMValue <- predict(glm_model, newdata = predGLMdf)
+      
+      output$GLMPred <- renderPrint({
+        GLMValue
+      })
+    })
 
     
     
@@ -828,8 +704,64 @@ shinyServer(function(session, input, output) {
       ps_CT
     })
     
-    output$CTVarImpGraph <- renderPlot({
-      plot(varImp(ctModel))
+    #output$CTVarImpGraph <- renderPlot({
+    #  plot(varImp(ctModel))
+    #})
+    
+    observeEvent(input$predictCTBtn, {
+      
+      predCTdf <- data.frame(Rating = c(0))
+      
+      if(!is.na(input$predHostICT)){
+        predCTdf$Host_Identity <- as.factor(c(input$predHostICT))
+      }
+      if(!is.na(input$predBorCT)){
+        predCTdf$Borough <- as.factor(c(input$predBorCT))
+      }
+      if(!is.na(input$predNeighCT)){
+        predCTdf$Neighbours <- as.factor(c(input$predNeighCT))
+      }
+      if(!is.na(input$predLatCT)){
+        predCTdf$Lat <- c(input$predLatCT)
+      }
+      if(!is.na(input$predLongCT)){
+        predCTdf$Long <- c(input$predLongCT)
+      }
+      if(!is.na(input$predANCT)){
+        predCTdf$Available_Now <- as.factor(c(input$predANCT))
+      }
+      if(!is.na(input$predCanCT)){
+        predCTdf$Cancellation <- as.factor(c(input$predCanCT))
+      }
+      if(!is.na(input$predtypeCT)){
+        predCTdf$Type <- as.factor(c(input$predtypeCT))
+      }
+      if(!is.na(input$predYrCT)){
+        predCTdf$Make_Year <- c(input$predYrCT)
+      }
+      if(!is.na(input$predPriceCT)){
+        predCTdf$Price <- c(input$predPriceCT)
+      }
+      if(!is.na(input$predSerFeeCT)){
+        predCTdf$Service_Fee <- c(input$predSerFeeCT)
+      }
+      if(!is.na(input$predMinStayCT)){
+        predCTdf$Min_Stay <- c(input$predMinStayCT)
+      }
+      if(!is.na(input$predHLCT)){
+        predCTdf$Host_Listings <- c(input$predHLCT)
+      }
+      if(!is.na(input$predAvCT)){
+        predCTdf$Availability <- c(input$predAvCT)
+      }
+      
+      predCTdf <- tibble(predCTdf) %>% select(-Rating)
+      
+      CTValue <- predict(ctModel, newdata = predCTdf)
+      
+      output$CTPred <- renderPrint({
+        CTValue
+      })
     })
     
     
@@ -885,6 +817,61 @@ shinyServer(function(session, input, output) {
       g
     })
     
+    observeEvent(input$predictRFBtn, {
+      
+      predRFdf <- data.frame(Rating = c(0))
+      
+      if(!is.na(input$predHostIRF)){
+        predRFdf$Host_Identity <- as.factor(c(input$predHostIRF))
+      }
+      if(!is.na(input$predBorRF)){
+        predRFdf$Borough <- as.factor(c(input$predBorRF))
+      }
+      if(!is.na(input$predNeighRF)){
+        predRFdf$Neighbours <- as.factor(c(input$predNeighRF))
+      }
+      if(!is.na(input$predLatRF)){
+        predRFdf$Lat <- c(input$predLatRF)
+      }
+      if(!is.na(input$predLongRF)){
+        predRFdf$Long <- c(input$predLongRF)
+      }
+      if(!is.na(input$predANRF)){
+        predRFdf$Available_Now <- as.factor(c(input$predANRF))
+      }
+      if(!is.na(input$predCanRF)){
+        predRFdf$Cancellation <- as.factor(c(input$predCanRF))
+      }
+      if(!is.na(input$predtypeRF)){
+        predRFdf$Type <- as.factor(c(input$predtypeRF))
+      }
+      if(!is.na(input$predYrRF)){
+        predRFdf$Make_Year <- c(input$predYrRF)
+      }
+      if(!is.na(input$predPriceRF)){
+        predRFdf$Price <- c(input$predPriceRF)
+      }
+      if(!is.na(input$predSerFeeRF)){
+        predRFdf$Service_Fee <- c(input$predSerFeeRF)
+      }
+      if(!is.na(input$predMinStayRF)){
+        predRFdf$Min_Stay <- c(input$predMinStayRF)
+      }
+      if(!is.na(input$predHLRF)){
+        predRFdf$Host_Listings <- c(input$predHLRF)
+      }
+      if(!is.na(input$predAvRF)){
+        predRFdf$Availability <- c(input$predAvRF)
+      }
+      
+      predRFdf <- tibble(predRFdf) %>% select(-Rating)
+      
+      RFValue <- predict(rfModel, newdata = predRFdf)
+      
+      output$RFPred <- renderPrint({
+        RFValue
+      })
+    })
     
     
     
@@ -898,19 +885,6 @@ shinyServer(function(session, input, output) {
 
   
 
-  #---------------Prediction---------------
-  
-  output$GLMPred <- renderPrint({
-    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
-  })
-  
-  output$CTPred <- renderPrint({
-    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
-  })
-  
-  output$RFPred <- renderPrint({
-    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
-  })
   
   
   })
