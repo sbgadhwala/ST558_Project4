@@ -364,7 +364,7 @@ body <- dashboardBody(
                          ),
                          br(),
                          
-                         actionButton("buildModels", strong("RUN ALL MODELS", style = "color:red;"), width = 770)
+                         actionButton("buildModels", strong("Run All Models", style = "color:red;"), width = 770)
                          
                          ),
                 
@@ -599,7 +599,7 @@ dashboardPage(
     title = span("NYC", tags$img(src = "air.png", width = '50%')),
     #title = "NYC Airbnb Listings",
                   tags$li(
-                      materialSwitch(inputId = "theme", label = strong("Switch Theme", style = "color:white;"), status = "default"),
+                      materialSwitch(inputId = "theme", label = strong("Switch to Dark Theme", style = "color:white;"), status = "default"),
                       style = "margin-top: 15px;",
                     class = "dropdown")
                   ),
