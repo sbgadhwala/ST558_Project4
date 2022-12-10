@@ -489,6 +489,7 @@ shinyServer(function(session, input, output) {
   
   ##--------------------------------------Modelling TAB-------------------------------------------------
   
+
   output$GLMDetails <- renderPrint({
     paste0("From the 'Fit Model' tab, click on Build Models to get summary and stats of GLM Model")
   })
@@ -512,10 +513,6 @@ shinyServer(function(session, input, output) {
   output$RFTestMetrics <- renderPrint({
     paste0("Once the model is built, fit statistics will appear here")
   })
-  
-  
-  
-  
   
   
   
@@ -577,7 +574,6 @@ shinyServer(function(session, input, output) {
     output$GLMTestMetrics <- renderPrint({
       stats
     })
-    
     
   })
   
@@ -643,9 +639,8 @@ shinyServer(function(session, input, output) {
     })
     
     output$CTVarImpGraph <- renderPlot({
-      plot(varImp(ct_model))
+      plot(varImp(ctModel))
     })
-    
     
   })
   
@@ -714,19 +709,14 @@ shinyServer(function(session, input, output) {
       g
     })
     
-    
   })
-  
-
   
   observeEvent(input$buildModels, {
     
-    output$GLMDetails <- renderPrint({
-    "Model Build in Progress"
-    })
-    
-    output$GLMTestMetrics <- renderPrint({
-      "Model Build in Progress"
+    observe({
+      updateSelectizeInput(
+        session, "selectModel", choices = c()
+      )
     })
     
     regData <- readData()
@@ -744,11 +734,12 @@ shinyServer(function(session, input, output) {
     
     
     #---------GLM---------------------------
-    output$CTDetails <- renderPrint({
+
+    output$GLMDetails <- renderPrint({
       "Model Build in Progress"
     })
     
-    output$CTTestMetrics <- renderPrint({
+    output$GLMTestMetrics <- renderPrint({
       "Model Build in Progress"
     })
     
@@ -791,6 +782,15 @@ shinyServer(function(session, input, output) {
     
     
     #-------------CT-------------------
+    
+    output$CTDetails <- renderPrint({
+      "Model Build in Progress"
+    })
+    
+    output$CTTestMetrics <- renderPrint({
+      "Model Build in Progress"
+    })
+    
     selectedCols2 = input$varsForCT
     
     modelDf2 <- regData[, selectedCols2, drop=FALSE]
@@ -829,7 +829,7 @@ shinyServer(function(session, input, output) {
     })
     
     output$CTVarImpGraph <- renderPlot({
-      plot(varImp(ct_model))
+      plot(varImp(ctModel))
     })
     
     
@@ -886,7 +886,31 @@ shinyServer(function(session, input, output) {
     })
     
     
+    
+    
+    
+    observe({
+      updateSelectizeInput(
+        session, "selectModel", choices = c("Generalized Linear Regression", "Classification Tree", "Random Forest")
+      )
+    })
   })
 
+  
+
+  #---------------Prediction---------------
+  
+  output$GLMPred <- renderPrint({
+    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
+  })
+  
+  output$CTPred <- renderPrint({
+    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
+  })
+  
+  output$RFPred <- renderPrint({
+    paste0("Prediction Rating will appear here once you enter the values for variables and click on 'Predict'")
+  })
+  
   
   })

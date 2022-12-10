@@ -278,15 +278,19 @@ body <- dashboardBody(
                                  multiple = TRUE,
                                  selected = c("Borough", "Cancellation", "Price", "Type")
                                ),
-                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increases", style = "color:black;")),
+                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increase", style = "color:black;")),
                                br(),
                                sliderInput("cvGLM", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 3),
                                collapsible = TRUE,
                                solidHeader = TRUE,
                                background = "black",
                                width = 2000,
-                               br(),
-                               actionButton("buildGLMModel", strong("Run only GLM Model", style = "color:red;"), width = 215)
+                               conditionalPanel("input.selectModel.length != 0", 
+                                              br(),
+                                              actionButton("buildGLMModel", strong("Rebuild GLM Model", style = "color:red;"), width = 215)
+                               )
+                               #br(),
+                               #actionButton("buildGLMModel", strong("Run only GLM Model", style = "color:red;"), width = 215)
                                )
                                ),
                            
@@ -302,7 +306,7 @@ body <- dashboardBody(
                                  multiple = TRUE,
                                  selected = c("Borough", "Cancellation", "Price", "Type")
                                ),
-                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increases", style = "color:black;")),
+                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increase", style = "color:black;")),
                                br(),
                                sliderInput("cvCT", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 5),
                                br(),
@@ -315,8 +319,12 @@ body <- dashboardBody(
                                solidHeader = TRUE,
                                background = "black",
                                width = 2000,
-                             br(),
-                             actionButton("buildCTModel", strong("Run only CT Model", style = "color:red;"), width = 215)
+                             conditionalPanel("input.selectModel.length != 0", 
+                                              br(),
+                                              actionButton("buildCTModel", strong("Rebuild CT Model", style = "color:red;"), width = 215)
+                             )
+                             #br(),
+                             #actionButton("buildCTModel", strong("Run only CT Model", style = "color:red;"), width = 215)
                            )
                            ),
                            
@@ -332,7 +340,7 @@ body <- dashboardBody(
                                  multiple = TRUE,
                                  selected = c("Borough", "Cancellation", "Price", "Type")
                                ),
-                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increases", style = "color:black;")),
+                               h6(strong("Note: As the number of selected variables increase, the time taken to build the model would also increase", style = "color:black;")),
                                br(),
                                sliderInput("cvRF", h5(strong("Set the Cross Validation K-Folds", style = "color:black;")), min = 2, max = 15, step = 1, value = 2),
                                br(),
@@ -345,9 +353,11 @@ body <- dashboardBody(
                                solidHeader = TRUE,
                                background = "black",
                                width = 2000,
-                             br(),
                              
-                             actionButton("buildRFModel", strong("Run only RF Model", style = "color:red;"), width = 215)
+                             conditionalPanel("input.selectModel.length != 0", 
+                                              br(),
+                                              actionButton("buildRFModel", strong("Rebuild RF Model", style = "color:red;"), width = 215)
+                             )
                            )
                            )
                            
@@ -358,8 +368,166 @@ body <- dashboardBody(
                          
                          ),
                 
-                tabPanel("Prediction", "Tab content 3")
+                tabPanel("Prediction", 
+                         
+                         h4(strong("Make a Prediction:")),
+                         selectizeInput("selectModel", "Select a Model for Prediction", choices = c()),
+                         conditionalPanel("input.selectModel.length==0",
+                                          h5("Please go to 'Fit Model' tab and click on", strong('Run all Models', style = "color:red;"), "to select a model to make a prediction.")
+                         ),
+                         conditionalPanel("input.selectModel == 'Classification Tree'",
+                                          br(),
+                                          h5(strong("You have selected ", strong("Classification Tree", style = "color:red;"), "Model for prediction")),
+                                          h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction:")),
+                                          br(),
+                                          conditionalPanel("input.varsForCT.indexOf('Host_Identity')!=-1",
+                                                           selectInput("predHostICT", "Select if host is verified:", choices = unique(readData()$Host_Identity), selected = readData()$Host_Identity[1])),
+                                          conditionalPanel("input.varsForCT.indexOf('Borough')!=-1",
+                                                           selectInput("predBorCT", "Select Borough of the Listing:", choices = unique(readData()$Borough), selected = readData()$Borough[1])),
+                                          conditionalPanel("input.varsForCT.indexOf('Neighbourhood')!=-1",
+                                                           selectInput("predNeighCT", "Select Neighbourhood of the Listing:", choices = unique(readData()$Neighbourhood), selected = readData()$Neighbourhood[1])),
+                                          conditionalPanel("input.varsForCT.indexOf('Lat')!=-1",
+                                                           numericInput("predLatCT", "Enter Latitude:", value = -40.7, step = 0.001)),
+                                          conditionalPanel("input.varsForCT.indexOf('Long')!=-1",
+                                                           numericInput("predLongCT", "Enter Longitude:", value = -73.9, step = 0.001)),
+                                          conditionalPanel("input.varsForCT.indexOf('Available_Now')!=-1",
+                                                           selectInput("predANCT", "Select Current Availability:", choices = unique(readData()$Available_Now), selected = readData()$Available_Now[1])),
+                                          conditionalPanel("input.varsForCT.indexOf('Cancellation')!=-1",
+                                                           selectInput("predCanCT", "Select Cancellation Policy:", choices = unique(readData()$Cancellation), selected = readData()$Cancellation[1])),
+                                          conditionalPanel("input.varsForCT.indexOf('Type')!=-1",
+                                                           selectInput("predtypeCT", "Select Type of Listing:", choices = unique(readData()$Type), selected = readData()$Type[1])),
+                                          conditionalPanel("input.varsForCT.indexOf('Make_Year')!=-1",
+                                                           numericInput("predYrCT", "Enter Year in which the Listing was Constructed:", min= 2000, max = 2022, value = 2010, step = 1)),
+                                          conditionalPanel("input.varsForCT.indexOf('Price')!=-1",
+                                                           numericInput("predPriceCT", "Enter the Price for the Listing", value = 500, min=0, step = 1)),
+                                          conditionalPanel("input.varsForCT.indexOf('Service_Fee')!=-1",
+                                                           numericInput("predSerFeeCT", "Enter the Service Fee for the Listing:", value = 100, min=0, step = 1)),
+                                          conditionalPanel("input.varsForCT.indexOf('Min_Stay')!=-1",
+                                                           numericInput("predMinStayCT", "Enter the Minimum Stay (in Days) for the Listing:", value = 10, min=0, step = 1)),
+                                          conditionalPanel("input.varsForCT.indexOf('Host_Listings')!=-1",
+                                                           numericInput("predHLCT", "Enter the number of total Listings host has:", value = 2, min=0, step = 1)),
+                                          conditionalPanel("input.varsForCT.indexOf('Host_Listings')!=-1",
+                                                           numericInput("predAvCT", "Enter the availability (in Days) of the Listing:", value = 365, min=0, step = 1)),
+                                          br(),
+                                          actionButton("predictCTBtn", strong("Predict", style = "color:red;")),
+                                          br(),
+                                          h4(strong("Prediction using Classification Tree model:")),
+                                          shinycssloaders::withSpinner(
+                                            verbatimTextOutput("CTPred"),
+                                            type = 6, color = "red")
+                                          ),
+                         
+                         
+                         conditionalPanel("input.selectModel == 'Generalized Linear Regression'",
+                                          br(),
+                                          h5(strong("You have selected ", strong("Generalized Linear Regression", style = "color:red;"), "Model for prediction")),
+                                          h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction:")),
+                                          br(),
+                                          conditionalPanel("input.varsForGLM.indexOf('Host_Identity')!=-1",
+                                                           selectInput("predHostIGLM", "Select if host is verified:", choices = unique(readData()$Host_Identity), selected = readData()$Host_Identity[1])),
+                                          conditionalPanel("input.varsForGLM.indexOf('Borough')!=-1",
+                                                           selectInput("predBorGLM", "Select Borough of the Listing:", choices = unique(readData()$Borough), selected = readData()$Borough[1])),
+                                          conditionalPanel("input.varsForGLM.indexOf('Neighbourhood')!=-1",
+                                                           selectInput("predNeighGLM", "Select Neighbourhood of the Listing:", choices = unique(readData()$Neighbourhood), selected = readData()$Neighbourhood[1])),
+                                          conditionalPanel("input.varsForGLM.indexOf('Lat')!=-1",
+                                                           numericInput("predLatGLM", "Enter Latitude:", value = -40.7, step = 0.001)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Long')!=-1",
+                                                           numericInput("predLongGLM", "Enter Longitude:", value = -73.9, step = 0.001)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Available_Now')!=-1",
+                                                           selectInput("predANGLM", "Select Current Availability:", choices = unique(readData()$Available_Now), selected = readData()$Available_Now[1])),
+                                          conditionalPanel("input.varsForGLM.indexOf('Cancellation')!=-1",
+                                                           selectInput("predCanGLM", "Select Cancellation Policy:", choices = unique(readData()$Cancellation), selected = readData()$Cancellation[1])),
+                                          conditionalPanel("input.varsForGLM.indexOf('Type')!=-1",
+                                                           selectInput("predtypeGLM", "Select Type of Listing:", choices = unique(readData()$Type), selected = readData()$Type[1])),
+                                          conditionalPanel("input.varsForGLM.indexOf('Make_Year')!=-1",
+                                                           numericInput("predYrGLM", "Enter Year in which the Listing was Constructed:", min= 2000, max = 2022, value = 2010, step = 1)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Price')!=-1",
+                                                           numericInput("predPriceGLM", "Enter the Price for the Listing", value = 500, min=0, step = 1)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Service_Fee')!=-1",
+                                                           numericInput("predSerFeeGLM", "Enter the Service Fee for the Listing:", value = 100, min=0, step = 1)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Min_Stay')!=-1",
+                                                           numericInput("predMinStayGLM", "Enter the Minimum Stay (in Days) for the Listing:", value = 10, min=0, step = 1)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Host_Listings')!=-1",
+                                                           numericInput("predHLGLM", "Enter the number of total Listings host has:", value = 2, min=0, step = 1)),
+                                          conditionalPanel("input.varsForGLM.indexOf('Host_Listings')!=-1",
+                                                           numericInput("predAvGLM", "Enter the availability (in Days) of the Listing:", value = 365, min=0, step = 1)),
+                                          br(),
+                                          actionButton("predictGLMBtn", strong("Predict", style = "color:red;")),
+                                          br(),
+                                          h4(strong("Prediction using Generalized Linear Regression model:")),
+                                          shinycssloaders::withSpinner(
+                                            verbatimTextOutput("GLMPred"),
+                                            type = 6, color = "red")
+                         ),
+                         
+                         
+                         conditionalPanel("input.selectModel == 'Random Forest'",
+                                          br(),
+                                          h5(strong("You have selected ", strong("Random Forest", style = "color:red;"), "Model for prediction")),
+                                          h5(strong("The following are the variables that were used to train the model. Enter values for those variables to make a prediction:")),
+                                          br(),
+                                          conditionalPanel("input.varsForRF.indexOf('Host_Identity')!=-1",
+                                                           selectInput("predHostIRF", "Select if host is verified:", choices = unique(readData()$Host_Identity), selected = readData()$Host_Identity[1])),
+                                          conditionalPanel("input.varsForRF.indexOf('Borough')!=-1",
+                                                           selectInput("predBorRF", "Select Borough of the Listing:", choices = unique(readData()$Borough), selected = readData()$Borough[1])),
+                                          conditionalPanel("input.varsForRF.indexOf('Neighbourhood')!=-1",
+                                                           selectInput("predNeighRF", "Select Neighbourhood of the Listing:", choices = unique(readData()$Neighbourhood), selected = readData()$Neighbourhood[1])),
+                                          conditionalPanel("input.varsForRF.indexOf('Lat')!=-1",
+                                                           numericInput("predLatRF", "Enter Latitude:", value = -40.7, step = 0.001)),
+                                          conditionalPanel("input.varsForRF.indexOf('Long')!=-1",
+                                                           numericInput("predLongRF", "Enter Longitude:", value = -73.9, step = 0.001)),
+                                          conditionalPanel("input.varsForRF.indexOf('Available_Now')!=-1",
+                                                           selectInput("predANRF", "Select Current Availability:", choices = unique(readData()$Available_Now), selected = readData()$Available_Now[1])),
+                                          conditionalPanel("input.varsForRF.indexOf('Cancellation')!=-1",
+                                                           selectInput("predCanRF", "Select Cancellation Policy:", choices = unique(readData()$Cancellation), selected = readData()$Cancellation[1])),
+                                          conditionalPanel("input.varsForRF.indexOf('Type')!=-1",
+                                                           selectInput("predtypeRF", "Select Type of Listing:", choices = unique(readData()$Type), selected = readData()$Type[1])),
+                                          conditionalPanel("input.varsForRF.indexOf('Make_Year')!=-1",
+                                                           numericInput("predYrRF", "Enter Year in which the Listing was Constructed:", min= 2000, max = 2022, value = 2010, step = 1)),
+                                          conditionalPanel("input.varsForRF.indexOf('Price')!=-1",
+                                                           numericInput("predPriceRF", "Enter the Price for the Listing", value = 500, min=0, step = 1)),
+                                          conditionalPanel("input.varsForRF.indexOf('Service_Fee')!=-1",
+                                                           numericInput("predSerFeeRF", "Enter the Service Fee for the Listing:", value = 100, min=0, step = 1)),
+                                          conditionalPanel("input.varsForRF.indexOf('Min_Stay')!=-1",
+                                                           numericInput("predMinStayRF", "Enter the Minimum Stay (in Days) for the Listing:", value = 10, min=0, step = 1)),
+                                          conditionalPanel("input.varsForRF.indexOf('Host_Listings')!=-1",
+                                                           numericInput("predHLRF", "Enter the number of total Listings host has:", value = 2, min=0, step = 1)),
+                                          conditionalPanel("input.varsForRF.indexOf('Host_Listings')!=-1",
+                                                           numericInput("predAvRF", "Enter the availability (in Days) of the Listing:", value = 365, min=0, step = 1)),
+                                          br(),
+                                          actionButton("predictRFBtn", strong("Predict", style = "color:red;")),
+                                          br(),
+                                          h4(strong("Prediction using Random Forest model:")),
+                                          shinycssloaders::withSpinner(
+                                            verbatimTextOutput("RFPred"),
+                                            type = 6, color = "red")
+                         )
+                         
+                         )
               ),
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
               
               tabBox(title = "See Model Statistics",
                 id = "tabset2",
