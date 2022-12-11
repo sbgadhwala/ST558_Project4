@@ -10,10 +10,10 @@ library(leaflet)
 library(corrplot)
 library(shinycssloaders)
 
-source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
+#source("C:\\Users\\sbgad\\Desktop\\NCSU Documents\\Fall 2022\\ST 558\\Project 4\\ST558_Project4\\Project4\\DataHelper.R")
 
 #For Github render
-#source("DataHelper.R")
+source("DataHelper.R")
 
 
 sidebar <- dashboardSidebar(
@@ -86,6 +86,16 @@ body <- dashboardBody(
                 column(4, 
                        box(title = h4(strong("Filter the Row data from the table", style = "color:red;")),
                          selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+                         
+                         #pickerInput(
+                        #   inputId = "aa", 
+                        #   label = "Select Borough", 
+                        #   choices = unique(readData()$Borough), 
+                        #   options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                        #   multiple = TRUE,
+                      #     selected = unique(readData()$Borough)
+                      #   ),
+                         
                          sliderInput("priceSlider", "Filter by Price range of the Listings", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
                          sliderInput("ratingSlider", "Filter by Rating range of the Listings", min = 1, max = 5, value = c(1, 5)),
                          selectizeInput("dataArrange", "Select Sorting by Ascending or Descending Price of Listings", selected = "Descending", choices = c("Ascending", "Descending")),
@@ -95,7 +105,9 @@ body <- dashboardBody(
                          br(),
                          conditionalPanel(condition = "input.moreOpts == 1", 
                                           selectizeInput("typeListData", "Type of Listing", choices = levels(as_factor(readData()$Type))),
-                                          numericInput("minYearData", "Construction of listing should be at least after (or in) the year:", value = 2010, min=2003, max=2022, step=1)),
+                                          numericInput("minYearData", "Construction of listing should be at least after (or in) the year:", value = 2010, min=2003, max=2022, step=1)
+                                          
+                                          ),
                          
                          
                          collapsible = TRUE,
