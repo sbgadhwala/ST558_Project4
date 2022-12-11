@@ -33,57 +33,89 @@ shinyServer(function(session, input, output) {
   
   ##-----------------------------------------Data TAB-------------------------------------------
   getDataTabData <- reactive({
+    #if(input$moreOpts){
+    #  if ("All"%in%input$dataBorough){
+    #    if (input$dataArrangeTable){
+    #      if (input$dataArrange ==  "Descending"){
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+    #      }else{
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+    #      }
+    #    }
+    #    else{
+    #      newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+    #    }
+    #  } else{
+    #    if (input$dataArrangeTable){
+    #      if (input$dataArrange ==  "Descending"){
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(desc(Price)) %>% filter(Borough %in% input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+    #      }else{
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price) %>% filter(Borough%in%input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+    #      }
+    #    }
+    #    else{
+    #      newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% filter(Borough%in%input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
+    #    }
+    #  }
+    #}else{
+    #  if ("All"%in%input$dataBorough){
+    #    if (input$dataArrangeTable){
+    #      if (input$dataArrange ==  "Descending"){
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% 
+    #          filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price))
+    #      }else{
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% 
+    #          filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price)
+    #      }
+    #    }
+    #    else{
+    #      newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])
+    #    }
+    #  } else{
+    #    if (input$dataArrangeTable){
+    #      if (input$dataArrange ==  "Descending"){
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(desc(Price)) %>% filter(Borough%in%input$dataBorough)
+    #      }else{
+    #        newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price) %>% filter(Borough%in%input$dataBorough)
+    #      }
+    #    }
+    #    else{
+    #      newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% filter(Borough%in%input$dataBorough)
+    #    }
+    #  }
+    #}
+    
+    newData <- readData()
+    
+    newData <- newData %>% filter(Borough %in% input$dataBorough) %>%
+      filter(Price >= input$priceSlider[1] & Price <= input$priceSlider[2]) %>%
+      filter(Rating >= input$ratingSlider[1] & Rating <= input$ratingSlider[2])
+    
     if(input$moreOpts){
-      if (input$dataBorough == "All"){
-        if (input$dataArrangeTable){
-          if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price)) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
-          }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(Price) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
-          }
-        }
-        else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
-        }
-      } else{
-        if (input$dataArrangeTable){
-          if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
-          }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price) %>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
-          }
-        }
-        else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% filter(Borough == input$dataBorough) %>% filter(Type == input$typeListData) %>% filter(Make_Year >= input$minYearData)
-        }
-      }
-    }else{
-      if (input$dataBorough == "All"){
-        if (input$dataArrangeTable){
-          if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% 
-              filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2]) %>% arrange(desc(Price))
-          }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2])%>% 
-              filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price)
-          }
-        }
-        else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])
-        }
-      } else{
-        if (input$dataArrangeTable){
-          if (input$dataArrange ==  "Descending"){
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(desc(Price)) %>% filter(Borough == input$dataBorough)
-          }else{
-            newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% arrange(Price) %>% filter(Borough == input$dataBorough)
-          }
-        }
-        else{
-          newData <- readData() %>% filter(Rating>=input$ratingSlider[1]) %>% filter(Rating<=input$ratingSlider[2]) %>% filter(Price >= input$priceSlider[1]) %>% filter(Price <= input$priceSlider[2])%>% filter(Borough == input$dataBorough)
-        }
+      newData <- newData %>% filter(Type %in% input$typeListData) %>%
+        filter(Make_Year >= input$minYearData[1] & Make_Year <= input$minYearData[2]) %>%
+        filter(Host_Identity %in% input$dataHostIdentity) %>%
+        filter(Neighbourhood %in% input$dataNeigh) %>%
+        filter(Available_Now %in% input$dataAvailNow) %>%
+        filter(Cancellation %in% input$dataCancel) %>%
+        filter(Service_Fee >= input$dataSerFee[1] & Service_Fee <= input$dataSerFee[2]) %>%
+        filter(Min_Stay >= input$dataMinStay[1] & Min_Stay <= input$dataMinStay[2]) %>%
+        filter(Host_Listings >= input$dataHostL[1] & Host_Listings <= input$dataHostL[2]) %>%
+        filter(Availability >= input$dataAvail[1] & Availability <= input$dataAvail[2]) %>%
+        filter(Lat >= input$dataLat[1] & Lat <= input$dataLat[2]) %>%
+        filter(Long >= input$dataLong[1] & Long <= input$dataLong[2])
+    }
+    
+    
+    if (input$dataArrangeTable){
+      if (input$dataArrange ==  "Descending"){
+        newData <- newData %>% arrange(desc(Price))
+      }else{
+        newData <- newData %>% arrange(Price)
       }
     }
+    
+    newData
     
   })
   
@@ -886,5 +918,7 @@ shinyServer(function(session, input, output) {
   
 
   
+  
+
   
   })

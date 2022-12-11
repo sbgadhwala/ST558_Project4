@@ -62,7 +62,7 @@ body <- dashboardBody(
     tabItem(tabName = "data",
             fluidPage(
               fluidRow(
-                box(title = h4("Data for Airbnb Listings Details in New York City"), 
+                box(title = h4(strong("Data for Airbnb Listings Details in New York City")), 
                     dataTableOutput("table"),
                     collapsible = TRUE,
                     solidHeader = TRUE,
@@ -71,41 +71,99 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                downloadButton('download',"Export as CSV")
+                column(2,
+                downloadButton('download',"Export as CSV")),
+                column(10, h5("The table shown above is dynamic. It will react to the filters applied below. Click on 'Export as CSV' anytime to download the table (even with the filters applied)"))
               ),
               
               br(),
               
               h4("If you want a filtered table, you can apply filters for ", strong("Rows and Columns"), " below:"),
-
-              
-              br(),
               br(),
               
               fluidRow(
                 column(4, 
                        box(title = h4(strong("Filter the Row data from the table", style = "color:red;")),
-                         selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
+                         #selectizeInput("dataBorough", "Select Borough", selected = "All", choices = c("All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")),
                          
-                         #pickerInput(
-                        #   inputId = "aa", 
-                        #   label = "Select Borough", 
-                        #   choices = unique(readData()$Borough), 
-                        #   options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
-                        #   multiple = TRUE,
-                      #     selected = unique(readData()$Borough)
-                      #   ),
+                         pickerInput(
+                           inputId = "dataBorough", 
+                           label = "Select Borough", 
+                           choices = unique(readData()$Borough), 
+                           options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                           multiple = TRUE,
+                           selected = unique(readData()$Borough)
+                         ),
                          
                          sliderInput("priceSlider", "Filter by Price range of the Listings", step = 5, min = min(readData()$Price), max = max(readData()$Price), value = c(min(readData()$Price), max(readData()$Price))),
                          sliderInput("ratingSlider", "Filter by Rating range of the Listings", min = 1, max = 5, value = c(1, 5)),
                          selectizeInput("dataArrange", "Select Sorting by Ascending or Descending Price of Listings", selected = "Descending", choices = c("Ascending", "Descending")),
                          checkboxInput("dataArrangeTable", "Arrange the data table by above selection of sorting"),
                          br(),
-                         checkboxInput("moreOpts", h5("Need to apply", strong("more Filters", style = "color:red;"), "on data?")),
+                         checkboxInput("moreOpts", "Show All Filters"),
                          br(),
                          conditionalPanel(condition = "input.moreOpts == 1", 
-                                          selectizeInput("typeListData", "Type of Listing", choices = levels(as_factor(readData()$Type))),
-                                          numericInput("minYearData", "Construction of listing should be at least after (or in) the year:", value = 2010, min=2003, max=2022, step=1)
+                                          #selectizeInput("typeListData", "Type of Listing", choices = levels(as_factor(readData()$Type))),
+                                          
+                                          pickerInput(
+                                            inputId = "typeListData", 
+                                            label = "Select Type of Listing:", 
+                                            choices = levels(as_factor(readData()$Type)), 
+                                            options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                            multiple = TRUE,
+                                            selected = levels(as_factor(readData()$Type))
+                                          ),
+                                          
+                                          sliderInput("minYearData", "Select Years of Construction of Listing Range:", value = c(min(readData()$Make_Year),max(readData()$Make_Year)), min=min(readData()$Make_Year), max=max(readData()$Make_Year), step=1),
+                                          
+                                          pickerInput(
+                                            inputId = "dataHostIdentity", 
+                                            label = "Host Identity:", 
+                                            choices = levels(as_factor(readData()$Host_Identity)), 
+                                            options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                            multiple = TRUE,
+                                            selected = levels(as_factor(readData()$Host_Identity))
+                                          ),
+                                          
+                                          pickerInput(
+                                            inputId = "dataNeigh", 
+                                            label = "Select Neighbourhood:", 
+                                            choices = levels(as_factor(readData()$Neighbourhood)), 
+                                            options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                            multiple = TRUE,
+                                            selected = levels(as_factor(readData()$Neighbourhood))
+                                          ),
+                                          
+                                          pickerInput(
+                                            inputId = "dataAvailNow", 
+                                            label = "Select Current Availability:", 
+                                            choices = levels(as_factor(readData()$Available_Now)), 
+                                            options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                            multiple = TRUE,
+                                            selected = levels(as_factor(readData()$Available_Now))
+                                          ),
+                                          
+                                          pickerInput(
+                                            inputId = "dataCancel", 
+                                            label = "Select Cancellation Rules:", 
+                                            choices = levels(as_factor(readData()$Cancellation)), 
+                                            options = list(`actions-box` = TRUE, size = 10,`selected-text-format` = "count > 3"), 
+                                            multiple = TRUE,
+                                            selected = levels(as_factor(readData()$Cancellation))
+                                          ),
+                                          
+                                          sliderInput("dataSerFee", "Select Service Fee Range:", value = c(min(readData()$Service_Fee),max(readData()$Service_Fee)), min=min(readData()$Service_Fee), max=max(readData()$Service_Fee), step=1),
+                                          
+                                          sliderInput("dataMinStay", "Select Minimum Stay (in Days) Range:", value = c(0,max(readData()$Min_Stay)), min=min(readData()$Min_Stay), max=max(readData()$Min_Stay), step=1),
+                                          
+                                          sliderInput("dataHostL", "Select Range of other Listings owned by the host:", value = c(min(readData()$Host_Listings), max(readData()$Host_Listings)), min=min(readData()$Host_Listings), max=max(readData()$Host_Listings), step=1),
+                                          
+                                          sliderInput("dataAvail", "Select Availability (in Days) Range:", value = c(0,max(readData()$Availability)), min=min(readData()$Availability), max=max(readData()$Availability), step=1),
+                                          
+                                          sliderInput("dataLat", "Select Latitude Range:", value = c(min(readData()$Lat), max(readData()$Lat)), min=min(readData()$Lat), max=max(readData()$Lat), step=0.000001),
+                                          
+                                          sliderInput("dataLong", "Select Longitude Range:", value = c(min(readData()$Long), max(readData()$Long)), min=min(readData()$Long), max=max(readData()$Long), step=0.000001)
+                                          
                                           
                                           ),
                          
@@ -256,10 +314,106 @@ body <- dashboardBody(
             
             ## TABS
             fluidPage(
+              withMathJax(),
             fluidRow(
               tabBox(title = "Set Model Details",
                 id = "tabset1",
-                tabPanel("Modeling Info", "First tab content"),
+                tabPanel("Modeling Info", 
+                         
+                         #h4(strong("Modeling section: Use this app to train models")),
+                         #br(),
+                         box(title = strong("Overview", style = "color:red;"),
+                         h4("In this R Shiny Application, you as a user are given the full control to tune and train all
+                            3 models that the app offers. 
+                            Since our target variable is 'Rating' which is a categorical varaible, this app offers classification models 
+                            to train and predict 'Rating' variable based on various predictors. 
+                            The 3 models are", strong("Generalized Linear Regression Model, Classification Tree and,
+                            Random Forest Model.")),
+                         h4("To get details about each model, expand the model box(es) shown below:"),
+                         collapsible = TRUE,
+                         solidHeader = TRUE,
+                         width = 12
+                         ),
+                         
+                         box(title = strong("Generalized Linear Regression", style = "color:red;"),
+                             h4("The generalized linear model (GLM) expands the general linear model so that the dependent variable is linearly 
+                             related to the factors and covariates via a specified link function. 
+                             The model calculates the effect that each of the predicting variable has on the target variable, and calculates the 
+                             weighted coefficients accoridngly such that the response variable is a categorical value, in this case, Rating of the 
+                             airbnb Listing. The model allows for the dependent variable to have a non-normal distribution. One of the good things about this 
+                                model is that it works best when the predictor variables are uncorrelated (which is true till some extent for this
+                                data).
+                                The link used in this case is a Logit link since the target variable is categorical. The model eqution 
+                                can be written out as:"),
+                             withMathJax(
+                               helpText('$$ {\\ln\\left(\\frac{p}{1-p}\\right)} = \\beta_0 + \\beta_1\\ Feature_1 + .... + \\beta_n\\ Feature_n + \\ e$$')
+                             ),
+                             h4("One of the drawbacks of this model is, unlike forward and backward stepwise models, 
+                                this model does not select the best features for the model, so sometimes the accuracy of this model
+                                does not get optimized."),
+                             collapsible = TRUE,
+                             collapsed = TRUE,
+                             solidHeader = TRUE,
+                             width = 12
+                         ),
+                         
+                         box(title = strong("Classifiaction Tree", style = "color:red;"),
+                             h4("A classification Tree or a Decision Tree is a form of 
+                                supervised machine learning technique where we continuously split the data according to a certain parameter. The 
+                                decision trees are built using recursive partitioning. In this method the model,
+                                splits the data into subsets, which then split repeatedly into even smaller subsets, and so on and so forth. 
+                                The process stops when the algorithm determines the data within the subsets are similar or 
+                                have met another criterion. Model starts at the tree root and split the data on the feature that 
+                                results in the largest information gain. In an iterative process, we can then repeat this splitting 
+                                procedure at each child node. Some advantages of this method are; less processing power required to build this 
+                                model, can handle missing values and it does not require normalized data"),
+                             span(tags$img(src = "ct.png", width = '25%', height = "25%", align = "center")),
+                             h4("The information gain is calculated on each node using the following formula:"),
+                             withMathJax(
+                               helpText('$$ - \\sum {P( X_i log_b P(X_i))}$$')
+                             ),
+                               
+                             
+                             h4("The drawbacks of this model are; a small change in data can lead to change in trees's nodes and classification 
+                                and hence lead to change in values, it takes more time to train as compared to GLM, and generally has a lower 
+                                overall prediction accuracy if the data is skewed heavily or biased."),
+                             collapsible = TRUE,
+                             collapsed = TRUE,
+                             solidHeader = TRUE,
+                             width = 12
+                         ),
+                         
+                         box(title = strong("Random Forest", style = "color:red;"),
+                             h4("Random Forest models are an improvised version of classification tree models. In Random Forest, 
+                                the model constructs many individual decision trees at training by taking subsets of training data set. Predictions from all trees are pooled 
+                                to make the final prediction which is the mode of the classes for classification. Feature importance is an important 
+                                factor that wieghs in for this model to see how the split of any tree for randomly divided data is being affected 
+                                by any given variable."),
+                             h4("The importance for each feature is calculated by the following formula:"),
+                             withMathJax(
+                               helpText('$$ \\frac{\\sum{n i_j}}{\\sum{n i_k}} $$ where j = node splits on feature i, and k = total nodes')
+                             ),
+                             
+                             
+                             h4("Some of the advantages of this model is that it can make classifications more dynamically observing data from multiple subsets and, hence, 
+                                the predictions are more accurate than normal classification tree or GLM. It can also handle large data sets quite well. One of the main 
+                                disadvantages of this model is that it takes a lot more time to train since it builds a number of trees as a part of the 
+                                training "),
+                             collapsible = TRUE,
+                             collapsed = TRUE,
+                             solidHeader = TRUE,
+                             width = 12
+                         ),
+                         
+                         h5("If you got an overview of the models, you can now go to the next tab that is 'Fit Model' Tab, to train the 3 models listed above. You can change the tuning parameters 
+                            that vary for each model as per your choice. You would also be able to control the size of training and testing data set. 
+                            After the model is built, you should see the models' statistics on the right pane of this page. To make a prediction, you can go to 
+                            'Prediction' tab.")
+                         
+                         ),
+                
+                
+                
                 
                 tabPanel("Fit Model", 
                          fluidRow(
@@ -608,7 +762,7 @@ body <- dashboardBody(
 dashboardPage(
   skin = "red",
   dashboardHeader(
-    title = span("NYC", tags$img(src = "air.png", width = '50%')),
+    title = span(tags$img(src = "air2.png", width = '50%')),
     #title = "NYC Airbnb Listings",
                   tags$li(
                       materialSwitch(inputId = "theme", label = strong("Switch to Dark Theme", style = "color:white;"), status = "default"),
