@@ -7,7 +7,7 @@
 The main prupose of this app is to let users, who are looking to put up their property on Airbnb in New York City, predict their listing's overall rating based on various attributes related to their property(s). This App also lets you visualize the trends of different attributes relevant to the Airbnb data, and also lets you see geospatially how are the competitors near you are doing. You can also filter data from the available data set to gain important insights.
 
 Sample Scenario:
-Supose you have a home that you want to list on the Airbnb webiste, but you are not sure what price you should keep or what service fee you should charge or other factors such that users would prefer your listing and give a good rating. For cases like this, this app would come handy as it provides just the right amount of insights and prediction of Ratings according to your property's attributes for you to make a decision.
+Supose you have a home that you want to list on the Airbnb webiste, but you are not sure what price you should keep or what service fee you should charge or other factors such that users would prefer your listing and give a good rating, resulting in frequent booking of your listing. For cases like this, this app would come handy as it provides just the right amount of insights and prediction of Ratings according to your property's attributes for you to make a decision.
 
 To run this application you would need the following packages: 
   * shiny
