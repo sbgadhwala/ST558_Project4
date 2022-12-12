@@ -1,2 +1,49 @@
 # New York City Airbnb - Estimating Ratings for New Hosts
 
+The main prupose of this app is to let users, who are looking to put up their property on Airbnb in New York City, predict their listing's overall rating based on various attributes related to their property(s).
+
+Supose you have a home that you want to list on the Airbnb webiste, but you are not sure what price you should keep or what service fee you should charge or other factors such that users would prefer your listing and give a good rating. For cases like this, this app would come handy as it provides just the right amount of insights and prediction of Ratings according to your property's attributes for you to make a decision.
+
+To run this application you would need the following packages: 
+  * shiny
+  * shinydashboard
+  * dashboardthemes
+  * shinythemes
+  * shinyWidgets
+  * tidyverse
+  * DT
+  * caret
+  * leaflet
+  * corrplot
+  * shinycssloaders
+  
+  To install these packages and load it in your environment, you can run the following code:
+  ```{r}
+  
+install.packages("shiny")
+install.packages("shinydashboard")
+install.packages("dashboardthemes")
+install.packages("shinythemes")
+install.packages("shinyWidgets")
+install.packages("tidyverse")
+install.packages("DT")
+install.packages("caret")
+install.packages("leaflet")
+install.packages("corrplot")
+install.packages("shinycssloaders")
+
+
+
+library(shiny)
+library(shinydashboard)
+library(dashboardthemes)
+library(shinythemes)
+library(shinyWidgets)
+library(tidyverse)
+library(DT)
+library(caret)
+library(leaflet)
+library(corrplot)
+library(shinycssloaders)
+  
+  ```
