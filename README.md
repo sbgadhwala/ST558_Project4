@@ -1,4 +1,4 @@
-# New York City Airbnb - Estimating Ratings for New Hosts
+# New York City Airbnb - Predicting Ratings for New Hosts
 
 The main prupose of this app is to let users, who are looking to put up their property on Airbnb in New York City, predict their listing's overall rating based on various attributes related to their property(s).
 
@@ -17,8 +17,8 @@ To run this application you would need the following packages:
   * corrplot
   * shinycssloaders
   
-  To install these packages and load it in your environment, you can run the following code:
-  ```{r}
+To install these packages and load it in your environment, you can run the following code:
+```{r}
   
 install.packages("shiny")
 install.packages("shinydashboard")
@@ -46,4 +46,14 @@ library(leaflet)
 library(corrplot)
 library(shinycssloaders)
   
-  ```
+```
+  
+To Run the Application, you can use the following chunk of code:
+
+```{r}
+
+library(shiny)
+
+shiny::runGitHub("ST558_Project4", "sbgadhwala", ref="main", subdir = "Project4")
+
+```
