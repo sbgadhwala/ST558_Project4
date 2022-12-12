@@ -49,7 +49,7 @@ body <- dashboardBody(
             fluidPage(
               fluidRow(
                 theme = shinytheme("cyborg"),
-                titlePanel(HTML("<h1><center><font size=14> New York City Airbnb - Ratings Prediction</font></center></h1>")),
+                titlePanel(HTML("<h1><center><font size=14> New York City Airbnb - Estimating Ratings</font></center></h1>")),
                 br(),
                 fluidRow(
                 column(12, align = "center", height = 12,
@@ -61,7 +61,7 @@ body <- dashboardBody(
                 ),
                 #br(),
                 br(),
-                box(title = strong("Application Introduction"),
+                box(title = strong("Application Introduction and Preface", style = "color:red;"),
                 column(12, align = "flex-end",
                        
                        h4("The main prupose of this app is to let users, who are looking to put up their property on Airbnb in New York City, predict their listing's overall rating
@@ -84,7 +84,7 @@ body <- dashboardBody(
                 
                 ),
                 
-                box(title = strong("Data"),
+                box(title = strong("Data", style = "color:red;"),
                     column(12, align = "flex-end",
                            
                            h4("The data for Airbnb listings in New York City is taken from Kaggle. You can find this data set",
@@ -106,7 +106,7 @@ body <- dashboardBody(
                                             h5("Price (Numeric): The Price (in $) for the listed property for 1 night"),
                                             h5("Service_Fee (Numeric): The Service Fee (in $) for the listed property for 1 night"),
                                             h5("Min_Stay (Numeric): The minimum number of days the listing has to be booked by customer"),
-                                            h5("Rating (Categorical): Rating of the listing"),
+                                            h5("Rating (Categorical): Rating of the listing (1, 2, 3, 4, 5)"),
                                             h5("Host_Listings (Numeric): The number of total listings that the host has"),
                                             h5("Availability (Numeric): The number of days the listing is available to be booked in a year"),
                                             )
@@ -117,7 +117,7 @@ body <- dashboardBody(
                     
                 ),
                 
-                box(title = strong("User Guide for the Application"),
+                box(title = strong("User Guide for the Application", style = "color:red;"),
                     column(12, align = "flex-end",
                            
                            h4("The application is divided into 4 tabs. You can switch between any tabs from the left side of any page."),
@@ -135,21 +135,21 @@ body <- dashboardBody(
                               the plots two-fold based on the above mentioned categorical variables from the data. The second part of this page includes 
                               the correlation plots. You can see a corr plot for the variables of your choice, and a correlation plot between 
                               any two variables of your choice."),
-                           h4("The last part of this page is the MAPS, where you can visually see the geolocation on the Airbnb listings based on 
+                           h4("The last part of this page is the Geospatial representation where you can visually see the geolocation on the Airbnb listings based on 
                               any filters that you wish to apply that are provided on that page. You can also further arrange and see the listings 
                               on the map by ascending or descending order of their Prices."),
                            br(),
                            h4(strong("Modelling:")),
                            h4("This is divided into three tabs. First is the 'Modelling Info' tab 
                               where you will get an overview of different models that this app offers. The models include Generalized Linear Regression Model,
-                              Classification Trees, and Random Forest. The response variable is the Rating of the listing, and input parameters can change 
+                              Classification Tree Model, and Random Forest Model. The response variable is the Rating of the listing, and input parameters can change 
                               as per your discretion."),
                            h4("The next tab is 'Fit Model' tab. Here, you would be able to adjust the parameters that you want to train your models 
-                              to, like adjust train/test data ratio, variables to build model, cross validation k-folds, etc varying model to model. There is a button to run all the models. Once you have set the model train parameters of your choice, you can click on that 
-                              button to run all the models. Once you click on that button, you will see the loading screen on the right hand side where each model's fit 
+                              to, like adjust train/test data ratio, variables to build model, cross validation k-folds, etc, varying model to model. There is a button to run all the models. Once you have set the model train parameters of your choice, you can click on that 
+                              button to run all the models. Once you click on that button, you will see the loading screen on the right pane of the page where each model's fit 
                               statistcs would be displayed. On the right pane of the page, you can switch between different models to that respective 
                               model's summary and fit statistics."),
-                           h4("The last tab is the 'Prediction' tab. Here you would be able to select a model that you wan to use for prediction. Note 
+                           h4("The last tab is the 'Prediction' tab. Here you would be able to select a model that you want to use for prediction. Note 
                               that the variables used to train a model would be presented there for you to give an input to make a prediction. This may 
                               change from one model to another. Finally, once you have given the input for all variables, you can click on the 'Predict' 
                               button. After the click, you will see the predicted Rating of the listing below. You can repeat this step by changing different 
@@ -162,7 +162,7 @@ body <- dashboardBody(
                     
                 ),
                 
-                box(title = strong("Sample Scenario"),
+                box(title = strong("Sample Scenario", style = "color:red;"),
                     column(12, align = "flex-end",
                            
                            h4("Supose you have a home that you want to list on the Airbnb webiste, but you are not sure what price you should keep or what 
@@ -495,8 +495,8 @@ body <- dashboardBody(
                          box(title = strong("Classifiaction Tree", style = "color:red;"),
                              h4("A classification Tree or a Decision Tree is a form of 
                                 supervised machine learning technique where we continuously split the data according to a certain parameter. The 
-                                decision trees are built using recursive partitioning. In this method the model,
-                                splits the data into subsets, which then split repeatedly into even smaller subsets, and so on and so forth. 
+                                decision trees are built using recursive partitioning. In this method, the model
+                                splits the data into subsets, which is then split repeatedly into even smaller subsets, and so on and so forth. 
                                 The process stops when the algorithm determines the data within the subsets are similar or 
                                 have met another criterion. Model starts at the tree root and split the data on the feature that 
                                 results in the largest information gain. In an iterative process, we can then repeat this splitting 
@@ -520,7 +520,7 @@ body <- dashboardBody(
                          
                          box(title = strong("Random Forest", style = "color:red;"),
                              h4("Random Forest models are an improvised version of classification tree models. In Random Forest, 
-                                the model constructs many individual decision trees at training by taking subsets of training data set. Predictions from all trees are pooled 
+                                the model constructs many individual decision trees at training by taking random subsets of training data set. Predictions from all trees are pooled 
                                 to make the final prediction which is the mode of the classes for classification. Feature importance is an important 
                                 factor that wieghs in for this model to see how the split of any tree for randomly divided data is being affected 
                                 by any given variable."),
@@ -531,7 +531,7 @@ body <- dashboardBody(
                              
                              
                              h4("Some of the advantages of this model is that it can make classifications more dynamically observing data from multiple subsets and, hence, 
-                                the predictions are more accurate than normal classification tree or GLM. It can also handle large data sets quite well. One of the main 
+                                the predictions are generally more accurate than normal Classification Tree and GLM. It can also handle large data sets quite well. One of the main 
                                 disadvantages of this model is that it takes a lot more time to train since it builds a number of trees as a part of the 
                                 training "),
                              collapsible = TRUE,
