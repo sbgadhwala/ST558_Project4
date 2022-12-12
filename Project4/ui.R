@@ -166,7 +166,7 @@ body <- dashboardBody(
                     column(12, align = "flex-end",
                            
                            h4("Supose you have a home that you want to list on the Airbnb webiste, but you are not sure what price you should keep or what 
-                              service fee you should charge such that users would prefer your listing and give a good rating."
+                              service fee you should charge such that users would prefer your listing and give a good rating, resulting in frequent booking of your listing."
                            ),
                            h4("So first, you can go to data tab, and just have a glance at the data, and apply filters to see prices and ratings of listings 
                               in your borough and neighbourhood just to get an overview."),
