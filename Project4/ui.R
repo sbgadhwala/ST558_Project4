@@ -70,7 +70,7 @@ body <- dashboardBody(
                        bring a change in their property(s) on the Airbnb website listings in order to increase their listing's booking frequency. 
                        Every customer that books the listing via airbnb 
                           gives a certain rating to the place, which can depend on various factors like price of the property, type of the property, 
-                          Area of the property, to name some. The ideal aim as a host would be to receive a high rating from the user. There are many 
+                          Area of the property, to name some. The ideal aim as a host would be to have a high rating from the customers resulting in frequent bookings of your property. There are many 
                           successful airbnb property listings which are highly rated by the customers. They have certain characteristics attached to them; 
                           in which Borough the property is located in, what is the neighbourhood, what is the price of the booking, are there any cancellation 
                           charges, is there any service fee, and lots of other factors. If these factors align with the customers' liking, they are highly 
