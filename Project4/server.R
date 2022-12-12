@@ -472,10 +472,10 @@ shinyServer(function(session, input, output) {
     
     geoData <- geoData[1:input$plotnum1,]
     
-    l <- leaflet() %>% addTiles() %>%
-      addMiniMap(
-        tiles = providers$Esri.WorldStreetMap,
-        toggleDisplay = TRUE)
+    l <- leaflet() %>% addTiles()# %>%
+      #addMiniMap(
+       # tiles = providers$Esri.WorldStreetMap,
+        #toggleDisplay = TRUE)
     
     for (i in seq(1:input$plotnum1)){
       l <- l %>% addMarkers(lng=geoData[i, 2]$Long, lat=geoData[i,1]$Lat, label = paste0("Type: ", geoData[i,4]$Type," ($",geoData[i,3]$Price, ", Rating: ",geoData[i,5]$Rating , ")"))
