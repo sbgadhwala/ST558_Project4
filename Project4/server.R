@@ -31,6 +31,19 @@ shinyServer(function(session, input, output) {
     }
     })
   
+  show_alert(
+    title = HTML("<img src = 'air.png' style = 'width:50%;' class = 'center'>"),
+    text = h4("Welcome to the Airbnb R Shiny App!"),
+    #type = "info",
+    btn_labels = "Take a Tour Around",
+    btn_colors = "#db4259",
+    html = FALSE,
+    closeOnClickOutside = TRUE,
+    showCloseButton = FALSE,
+    width = NULL,
+    session = session
+  )
+  
   ##-----------------------------------------Data TAB-------------------------------------------
   getDataTabData <- reactive({
     #if(input$moreOpts){
@@ -219,6 +232,21 @@ shinyServer(function(session, input, output) {
   
   output$plot1 <- renderPlot({
     
+    if (input$varY == input$grpBy){
+      
+      show_alert(
+        title = "Error",
+        text = h4(paste0("You have selected ", input$varY, " as both of your classifications.", " Please select distinct classifications")),
+        type = "warning",
+        btn_labels = "Close",
+        btn_colors = "#db4259",
+        html = FALSE,
+        closeOnClickOutside = TRUE,
+        showCloseButton = FALSE,
+        width = NULL,
+        session = session
+      )
+    }
 
     if (input$varX == "Number of Listings"){
       df <- getDataViz %>% group_by_(input$varY, input$grpBy) %>% summarize(Listings = n())
