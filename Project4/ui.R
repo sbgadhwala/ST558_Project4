@@ -49,11 +49,146 @@ body <- dashboardBody(
             fluidPage(
               fluidRow(
                 theme = shinytheme("cyborg"),
-                titlePanel(HTML("<h1><center><font size=14> About </font></center></h1>")),
-                HTML("<h6><center><font size=4> Hello Hello Hello Hello Hello <br> 
-                     https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata <br>
-                     BBBB Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello  </font></center></h6>")
-              )
+                titlePanel(HTML("<h1><center><font size=14> New York City Airbnb - Ratings Prediction</font></center></h1>")),
+                br(),
+                fluidRow(
+                column(12, align = "center", height = 12,
+                       span(tags$img(src = "nyc.jpg", width = '30%', height = "30%"))
+                ),
+                #column(6, align = "center", height = 12,
+                #       span(tags$img(src = "nyc2.jpg", width = '30%', height = "30%"))
+                #)
+                ),
+                #br(),
+                br(),
+                box(title = strong("Application Introduction"),
+                column(12, align = "flex-end",
+                       
+                       h4("The main prupose of this app is to let users, who are looking to put up their property on Airbnb in New York City, predict their listing's overall rating
+                       based on various attributes related to their property(s).
+                       This app is aimed towards people who are potentially looking to put up their property or deciding to 
+                       bring a change in their property(s) on the Airbnb website listings in order to increase their listing's booking frequency. 
+                       Every customer that books the listing via airbnb 
+                          gives a certain rating to the place, which can depend on various factors like price of the property, type of the property, 
+                          Area of the property, to name some. The ideal aim as a host would be to receive a high rating from the user. There are many 
+                          successful airbnb property listings which are highly rated by the customers. They have certain characteristics attached to them; 
+                          in which Borough the property is located in, what is the neighbourhood, what is the price of the booking, are there any cancellation 
+                          charges, is there any service fee, and lots of other factors. If these factors align with the customers' liking, they are highly 
+                          likely to give a good rating. There are also listings on Airbnb website with not-so-good ratings. All of them have these attributes attached 
+                          with them as well."
+                       )
+                       ),
+                width=12,
+                collapsible = TRUE,
+                solidHeader = TRUE
+                
+                ),
+                
+                box(title = strong("Data"),
+                    column(12, align = "flex-end",
+                           
+                           h4("The data for Airbnb listings in New York City is taken from Kaggle. You can find this data set",
+                              a("here.", href="https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata")),
+                           
+                           checkboxInput("showData", "Show Details about the Data"),
+                           conditionalPanel("input.showData == 1", 
+                                            h4("The data set was taken from the above given link and was then cleaned up to extract relevant features and 
+                                               remove missing values. The features included in this application are:"),
+                                            h5("Host_Identity (Categorical): If the host is verified on Airbnb website (verified, unconfirmed)"),
+                                            h5("Borough (Categorical): What Borough is the listed property located in (Brookyln, Manhattan, Queens, Bronx, Staten Island)"),
+                                            h5("Neighbourhood (Categorical): What Neighbourhood is the listed property located in (226 Neighbourhoods)"),
+                                            h5("Lat (Numeric): Latitude of the listed property"),
+                                            h5("Long (Numeric): Longitude of the listed property"),
+                                            h5("Available_Now (Categorical): If the listed property is currently available or not (true, false)"),
+                                            h5("Cancellation (Categorical): What is the cancellation rules of the listing (strict, moderate, flexible)"),
+                                            h5("Type (Categorical): What is the type of property (Private Room, Entire Home/apt, Shared Room, Hotel Room)"),
+                                            h5("Make_Year (Numeric): The year of construction of the listed property"),
+                                            h5("Price (Numeric): The Price (in $) for the listed property for 1 night"),
+                                            h5("Service_Fee (Numeric): The Service Fee (in $) for the listed property for 1 night"),
+                                            h5("Min_Stay (Numeric): The minimum number of days the listing has to be booked by customer"),
+                                            h5("Rating (Categorical): Rating of the listing"),
+                                            h5("Host_Listings (Numeric): The number of total listings that the host has"),
+                                            h5("Availability (Numeric): The number of days the listing is available to be booked in a year"),
+                                            )
+                    ),
+                    width=12,
+                    collapsible = TRUE,
+                    solidHeader = TRUE
+                    
+                ),
+                
+                box(title = strong("User Guide for the Application"),
+                    column(12, align = "flex-end",
+                           
+                           h4("The application is divided into 4 tabs. You can switch between any tabs from the left side of any page."),
+                           br(),
+                           h4(strong("About:")),
+                           h4("This page has the information about the app and applications of the app. This is the page that you are currently in."),
+                           br(),
+                           h4(strong("Data:")),
+                           h4("In this tab, you can see the raw data that is used in this app. There you can apply filters 
+                              for both rows and columns, and can see the filtered data. An option to download the dynamic data is also 
+                              given in this tab. The table on this tab is reactive, and will react to any filters that you wish to apply."),
+                           br(),
+                           h4(strong("Visualizations:")),
+                           h4("In this tab, you can plot the trends of different attributes that are relevant to the end aim. You can also classify 
+                              the plots two-fold based on the above mentioned categorical variables from the data. The second part of this page includes 
+                              the correlation plots. You can see a corr plot for the variables of your choice, and a correlation plot between 
+                              any two variables of your choice."),
+                           h4("The last part of this page is the MAPS, where you can visually see the geolocation on the Airbnb listings based on 
+                              any filters that you wish to apply that are provided on that page. You can also further arrange and see the listings 
+                              on the map by ascending or descending order of their Prices."),
+                           br(),
+                           h4(strong("Modelling:")),
+                           h4("This is divided into three tabs. First is the 'Modelling Info' tab 
+                              where you will get an overview of different models that this app offers. The models include Generalized Linear Regression Model,
+                              Classification Trees, and Random Forest. The response variable is the Rating of the listing, and input parameters can change 
+                              as per your discretion."),
+                           h4("The next tab is 'Fit Model' tab. Here, you would be able to adjust the parameters that you want to train your models 
+                              to, like adjust train/test data ratio, variables to build model, cross validation k-folds, etc varying model to model. There is a button to run all the models. Once you have set the model train parameters of your choice, you can click on that 
+                              button to run all the models. Once you click on that button, you will see the loading screen on the right hand side where each model's fit 
+                              statistcs would be displayed. On the right pane of the page, you can switch between different models to that respective 
+                              model's summary and fit statistics."),
+                           h4("The last tab is the 'Prediction' tab. Here you would be able to select a model that you wan to use for prediction. Note 
+                              that the variables used to train a model would be presented there for you to give an input to make a prediction. This may 
+                              change from one model to another. Finally, once you have given the input for all variables, you can click on the 'Predict' 
+                              button. After the click, you will see the predicted Rating of the listing below. You can repeat this step by changing different 
+                              input parameters, and switching between different models.")
+                           
+                    ),
+                    width=12,
+                    collapsible = TRUE,
+                    solidHeader = TRUE
+                    
+                ),
+                
+                box(title = strong("Sample Scenario"),
+                    column(12, align = "flex-end",
+                           
+                           h4("Supose you have a home that you want to list on the Airbnb webiste, but you are not sure what price you should keep or what 
+                              service fee you should charge such that users would prefer your listing and give a good rating."
+                           ),
+                           h4("So first, you can go to data tab, and just have a glance at the data, and apply filters to see prices and ratings of listings 
+                              in your borough and neighbourhood just to get an overview."),
+                           h4("Then you can go to vizualizations tab and see a trend of what the prices of homes have been in your borough. There you can 
+                              also see a price range of listings around the location of your home from the maps. You can also plot the corr plot to see which 
+                              factors affect the most or are correlated to 'Rating' variable."),
+                           h4("Finally, you can go to modelling tab, fit all 3 models according to parameters and 
+                              the selection of the variables of your choice. Once the models are built, you can go to prediction tab, and enter the values of the 
+                              selected variables according to your property or your discretion, and predict the Rating."),
+                           h4("There you'll see a predicted Rating for your home if you were to list it on Airbnb as per those input variables on prediction tab. There 
+                              you can change the inputs again to get a new prediction."),
+                           h4("For example, if you got a predicted Rating as 3 for a input price of $600, you can change the price of your home to 400$ and that 
+                              might increase the predicted rating from 3 to 4 or to any other value. You can similarly play around with different input values 
+                              and see the change in predicted Rating, and from that, you can finalize the set of values that you can put for your home on Airbnb website.")
+                    ),
+                    width=12,
+                    collapsible = TRUE,
+                    solidHeader = TRUE
+                    
+                ),
+                
+               )
             )
     ),
     
