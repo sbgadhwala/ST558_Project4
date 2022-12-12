@@ -49,7 +49,7 @@ body <- dashboardBody(
             fluidPage(
               fluidRow(
                 theme = shinytheme("cyborg"),
-                titlePanel(HTML("<h1><center><font size=14> New York City Airbnb - Estimating Ratings for New Hosts</font></center></h1>")),
+                titlePanel(HTML("<h1><center><font size=14> New York City Airbnb - Predicting Ratings for New Hosts</font></center></h1>")),
                 br(),
                 fluidRow(
                 column(12, align = "center", height = 12,
