@@ -20,22 +20,24 @@ To run this application you would need the following packages:
   * caret
   * leaflet
   * corrplot
+  * ggplot2
   * shinycssloaders
   
 To install these packages and load it in your environment, you can run the following code:
 ```{r}
   
-install.packages("shiny")
-install.packages("shinydashboard")
-install.packages("dashboardthemes")
-install.packages("shinythemes")
-install.packages("shinyWidgets")
-install.packages("tidyverse")
-install.packages("DT")
-install.packages("caret")
-install.packages("leaflet")
-install.packages("corrplot")
-install.packages("shinycssloaders")
+install.packages(c("shiny",
+  "shinydashboard",
+  "dashboardthemes",
+  "shinythemes",
+  "shinyWidgets",
+  "tidyverse",
+  "DT",
+  "caret",
+  "leaflet",
+  "corrplot",
+  "ggplot2",
+  "shinycssloaders"))
 
 
 
@@ -49,6 +51,7 @@ library(DT)
 library(caret)
 library(leaflet)
 library(corrplot)
+library(ggplot2)
 library(shinycssloaders)
   
 ```
