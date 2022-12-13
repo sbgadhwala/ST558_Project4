@@ -35,6 +35,7 @@ install.packages(c("shiny",
   "caret",
   "leaflet",
   "corrplot",
+  "ggplot2",
   "shinycssloaders"))
 
 
