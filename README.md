@@ -20,6 +20,7 @@ To run this application you would need the following packages:
   * caret
   * leaflet
   * corrplot
+  * ggplot2
   * shinycssloaders
   
 To install these packages and load it in your environment, you can run the following code:
@@ -50,6 +51,7 @@ library(DT)
 library(caret)
 library(leaflet)
 library(corrplot)
+library(ggplot2)
 library(shinycssloaders)
   
 ```
