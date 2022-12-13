@@ -56,7 +56,7 @@ df1
 
 
 ```{r}
-write.csv(df1, "C:\\Users\\sbgad\\Desktop\\airbnb\\cleanData_Airbnb.csv")
+write.csv(df1, "cleanData_Airbnb.csv")
 
 ```
 
