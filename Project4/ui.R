@@ -556,7 +556,7 @@ body <- dashboardBody(
                          box(
                            h4("Response Variable: ", strong("Rating", style = "color:red;")),
                              h5("Model Type: Classification"),
-                             sliderInput("testTrainPartition", h5(strong("Select the proportion of "), strong("Train/Test", style = "color:red;"), strong(" data ratio for each models below")), min = 0, max = 1, step = 0.01, value = 0.7),
+                             sliderInput("testTrainPartition", h5(strong("Select the proportion of "), strong("Train/Test", style = "color:red;"), strong(" data ratio for each models below")), min = 0.1, max = 0.9, step = 0.01, value = 0.7),
                              collapsible = TRUE,
                              solidHeader = TRUE,
                            width = 12
